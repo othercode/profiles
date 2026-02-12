@@ -1,0 +1,29 @@
+{
+  "name": "othercode",
+  "owner": {
+    "name": "otherCode"
+  },
+  "metadata": {
+    "description": "Engineering profiles — stack-specific conventions, workflows, and automation",
+    "version": "1.0.0",
+    "pluginRoot": "./plugins"
+  },
+  "plugins": [
+    {
+      "name": "laravel-engineering",
+      "source": "laravel-engineering",
+      "description": "Laravel Engineering — conventions, workflows, and automation for Laravel + Vue.js development",
+      "version": "1.0.0",
+      "category": "backend",
+      "tags": ["php", "laravel", "vuejs", "rest-api"]
+    },
+    {
+      "name": "django-engineering",
+      "source": "django-engineering",
+      "description": "Django Engineering — conventions, workflows, and automation for Django + DRF development",
+      "version": "1.0.0",
+      "category": "backend",
+      "tags": ["python", "django", "drf", "rest-api"]
+    }
+  ]
+}

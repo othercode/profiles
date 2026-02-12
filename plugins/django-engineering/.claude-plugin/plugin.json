@@ -1,0 +1,8 @@
+{
+  "name": "django-engineering",
+  "description": "Django Engineering — conventions, workflows, and automation for Django + DRF development",
+  "version": "1.0.0",
+  "author": {
+    "name": "otherCode"
+  }
+}

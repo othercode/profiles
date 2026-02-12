@@ -1,0 +1,367 @@
+name: Validate Profiles
+
+on:
+  push:
+    branches: ["master"]
+  pull_request:
+    branches: ["master"]
+    types: ["opened", "synchronize", "reopened"]
+
+jobs:
+  validate-json:
+    name: Validate JSON Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate all JSON files
+        uses: GrantBirki/json-yaml-validate@v3
+        with:
+          comment: "true"
+          json_schema: ""
+          yaml_as_json: "false"
+          files: |
+            **/*.json
+
+  validate-marketplace:
+    name: Validate Marketplace Schema
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup jq
+        uses: dcarbone/install-jq-action@v3
+
+      - name: Validate marketplace required fields
+        run: |
+          echo "Validating marketplace.json schema..."
+          FILE=".claude-plugin/marketplace.json"
+
+          # Required top-level fields
+          for field in name owner plugins; do
+            if ! jq -e ".$field" "$FILE" > /dev/null 2>&1; then
+              echo "::error::Missing required field: $field"
+              exit 1
+            fi
+            echo "✓ Field '$field' present"
+          done
+
+          # owner.name is required
+          if ! jq -e ".owner.name" "$FILE" > /dev/null 2>&1; then
+            echo "::error::Missing required field: owner.name"
+            exit 1
+          fi
+          echo "✓ Field 'owner.name' present"
+
+          # plugins must be an array
+          if ! jq -e '.plugins | type == "array"' "$FILE" > /dev/null 2>&1; then
+            echo "::error::Field 'plugins' must be an array"
+            exit 1
+          fi
+          echo "✓ Field 'plugins' is an array"
+
+          echo ""
+          echo "✅ Marketplace schema is valid"
+
+      - name: Validate plugin entries
+        run: |
+          echo "Validating plugin entries in marketplace.json..."
+          FILE=".claude-plugin/marketplace.json"
+          plugin_count=$(jq '.plugins | length' "$FILE")
+
+          for ((i=0; i<plugin_count; i++)); do
+            name=$(jq -r ".plugins[$i].name // empty" "$FILE")
+            source=$(jq -r ".plugins[$i].source // empty" "$FILE")
+
+            if [ -z "$name" ]; then
+              echo "::error::Plugin entry $((i+1)): missing required field 'name'"
+              exit 1
+            fi
+
+            if [ -z "$source" ]; then
+              echo "::error::Plugin entry $((i+1)) ($name): missing required field 'source'"
+              exit 1
+            fi
+
+            # Validate version format if present (semver)
+            version=$(jq -r ".plugins[$i].version // empty" "$FILE")
+            if [ -n "$version" ]; then
+              if ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$'; then
+                echo "::error::Plugin '$name': version '$version' is not valid semver"
+                exit 1
+              fi
+              echo "✓ Plugin '$name': version '$version' is valid semver"
+            fi
+
+            echo "✓ Plugin '$name' entry is valid"
+          done
+
+          echo ""
+          echo "✅ All plugin entries are valid"
+
+      - name: Check for duplicate plugin names
+        run: |
+          echo "Checking for duplicate plugin names..."
+          FILE=".claude-plugin/marketplace.json"
+
+          duplicates=$(jq -r '.plugins[].name' "$FILE" | sort | uniq -d)
+          if [ -n "$duplicates" ]; then
+            echo "::error::Duplicate plugin names found: $duplicates"
+            exit 1
+          fi
+
+          echo "✓ No duplicate plugin names"
+
+  validate-plugins:
+    name: Validate Plugin Structure
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup jq
+        uses: dcarbone/install-jq-action@v3
+
+      - name: Validate each plugin directory
+        run: |
+          echo "Validating plugin directories..."
+          FILE=".claude-plugin/marketplace.json"
+
+          # Resolve pluginRoot if set
+          plugin_root=$(jq -r '.metadata.pluginRoot // "."' "$FILE")
+
+          plugins=$(jq -r '.plugins[] | select(.source | type == "string") | .source' "$FILE")
+
+          for source in $plugins; do
+            plugin_path="$plugin_root/$source"
+            # Normalize path (remove ./ prefix and double slashes)
+            plugin_path=$(echo "$plugin_path" | sed 's|^\./||;s|//|/|g')
+
+            echo ""
+            echo "Checking plugin: $source"
+            echo "  Path: $plugin_path"
+            echo "  --------------------------------"
+
+            # Directory must exist
+            if [ ! -d "$plugin_path" ]; then
+              echo "::error::Plugin '$source': directory not found at $plugin_path"
+              exit 1
+            fi
+            echo "  ✓ Directory exists"
+
+            # plugin.json must exist
+            pjson="$plugin_path/.claude-plugin/plugin.json"
+            if [ ! -f "$pjson" ]; then
+              echo "::error::Plugin '$source': missing .claude-plugin/plugin.json"
+              exit 1
+            fi
+            echo "  ✓ plugin.json exists"
+
+            # plugin.json must be valid JSON
+            if ! jq empty "$pjson" 2>/dev/null; then
+              echo "::error::Plugin '$source': plugin.json is not valid JSON"
+              exit 1
+            fi
+            echo "  ✓ plugin.json is valid JSON"
+
+            # Required field: name
+            if ! jq -e ".name" "$pjson" > /dev/null 2>&1; then
+              echo "::error::Plugin '$source': plugin.json missing required field 'name'"
+              exit 1
+            fi
+            echo "  ✓ plugin.json has 'name' field"
+
+            # Name in plugin.json should match marketplace entry
+            pjson_name=$(jq -r ".name" "$pjson")
+            marketplace_name=$(jq -r ".plugins[] | select(.source == \"$source\") | .name" "$FILE")
+            if [ "$pjson_name" != "$marketplace_name" ]; then
+              echo "::error::Plugin '$source': name mismatch — plugin.json has '$pjson_name', marketplace has '$marketplace_name'"
+              exit 1
+            fi
+            echo "  ✓ Name matches marketplace entry"
+
+            # Validate version format in plugin.json if present
+            version=$(jq -r ".version // empty" "$pjson")
+            if [ -n "$version" ]; then
+              if ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$'; then
+                echo "::error::Plugin '$source': version '$version' in plugin.json is not valid semver"
+                exit 1
+              fi
+              echo "  ✓ Version '$version' is valid semver"
+            fi
+
+            echo "  ✓ Plugin '$source' is valid"
+          done
+
+          echo ""
+          echo "✅ All plugin directories are valid"
+
+  validate-skills:
+    name: Validate Skill Frontmatter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate SKILL.md frontmatter
+        run: |
+          echo "Validating SKILL.md files..."
+          errors=0
+
+          while IFS= read -r skill_file; do
+            skill_dir=$(dirname "$skill_file")
+            skill_name=$(basename "$skill_dir")
+
+            echo ""
+            echo "Checking skill: $skill_file"
+
+            # Must start with frontmatter delimiter
+            first_line=$(head -n 1 "$skill_file")
+            if [ "$first_line" != "---" ]; then
+              echo "::error file=$skill_file::Missing YAML frontmatter (must start with ---)"
+              errors=$((errors + 1))
+              continue
+            fi
+
+            # Extract frontmatter (between first and second ---)
+            frontmatter=$(sed -n '2,/^---$/p' "$skill_file" | sed '$d')
+
+            # Check name field exists
+            name_value=$(echo "$frontmatter" | grep -E '^name:' | sed 's/^name:\s*//')
+            if [ -z "$name_value" ]; then
+              echo "::error file=$skill_file::Missing required frontmatter field: name"
+              errors=$((errors + 1))
+            else
+              echo "  ✓ name: $name_value"
+
+              # Name should match directory name
+              if [ "$name_value" != "$skill_name" ]; then
+                echo "::warning file=$skill_file::Skill name '$name_value' does not match directory name '$skill_name'"
+              fi
+
+              # Name max 64 characters
+              if [ ${#name_value} -gt 64 ]; then
+                echo "::error file=$skill_file::Skill name exceeds 64 characters (${#name_value})"
+                errors=$((errors + 1))
+              fi
+
+              # Name should only contain lowercase letters, numbers, hyphens
+              if ! echo "$name_value" | grep -qE '^[a-z0-9-]+$'; then
+                echo "::error file=$skill_file::Skill name must contain only lowercase letters, numbers, and hyphens"
+                errors=$((errors + 1))
+              fi
+            fi
+
+            # Check description field exists
+            description_value=$(echo "$frontmatter" | grep -E '^description:' | sed 's/^description:\s*//')
+            if [ -z "$description_value" ]; then
+              echo "::error file=$skill_file::Missing required frontmatter field: description"
+              errors=$((errors + 1))
+            else
+              # Remove surrounding quotes if present
+              desc_clean=$(echo "$description_value" | sed 's/^"//;s/"$//')
+              desc_len=${#desc_clean}
+              echo "  ✓ description: ${desc_clean:0:80}..."
+
+              # Description max 1024 characters
+              if [ "$desc_len" -gt 1024 ]; then
+                echo "::error file=$skill_file::Description exceeds 1024 characters ($desc_len)"
+                errors=$((errors + 1))
+              fi
+
+              # Description should not be empty
+              if [ "$desc_len" -eq 0 ]; then
+                echo "::error file=$skill_file::Description must not be empty"
+                errors=$((errors + 1))
+              fi
+            fi
+
+            # Check SKILL.md line count (recommended under 500)
+            line_count=$(wc -l < "$skill_file")
+            if [ "$line_count" -gt 500 ]; then
+              echo "::warning file=$skill_file::SKILL.md has $line_count lines (recommended: under 500)"
+            else
+              echo "  ✓ Line count: $line_count (under 500)"
+            fi
+
+            echo "  ✓ Skill '$skill_name' frontmatter is valid"
+          done < <(find plugins -name "SKILL.md" -type f)
+
+          echo ""
+          if [ "$errors" -gt 0 ]; then
+            echo "::error::Found $errors frontmatter error(s)"
+            exit 1
+          fi
+          echo "✅ All SKILL.md frontmatter is valid"
+
+  validate-hooks:
+    name: Validate Hook Files
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup jq
+        uses: dcarbone/install-jq-action@v3
+
+      - name: Validate hooks.json files
+        run: |
+          echo "Validating hooks.json files..."
+          errors=0
+
+          while IFS= read -r hook_file; do
+            echo ""
+            echo "Checking: $hook_file"
+
+            # Must be valid JSON
+            if ! jq empty "$hook_file" 2>/dev/null; then
+              echo "::error file=$hook_file::Invalid JSON syntax"
+              errors=$((errors + 1))
+              continue
+            fi
+            echo "  ✓ Valid JSON"
+
+            # Must have hooks key
+            if ! jq -e ".hooks" "$hook_file" > /dev/null 2>&1; then
+              echo "::error file=$hook_file::Missing required 'hooks' key"
+              errors=$((errors + 1))
+              continue
+            fi
+            echo "  ✓ Has 'hooks' key"
+
+            # Validate known hook event names
+            valid_events="SessionStart PreToolUse PostToolUse Stop"
+            events=$(jq -r '.hooks | keys[]' "$hook_file")
+            for event in $events; do
+              if ! echo "$valid_events" | grep -qw "$event"; then
+                echo "::warning file=$hook_file::Unknown hook event '$event' (valid: $valid_events)"
+              else
+                echo "  ✓ Hook event '$event' is valid"
+              fi
+            done
+
+            echo "  ✓ $hook_file is valid"
+          done < <(find plugins -name "hooks.json" -type f)
+
+          echo ""
+          if [ "$errors" -gt 0 ]; then
+            echo "::error::Found $errors hook validation error(s)"
+            exit 1
+          fi
+          echo "✅ All hooks.json files are valid"
+
+  lint-markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Lint markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v19
+        with:
+          globs: |
+            **/*.md
+            !**/node_modules/**

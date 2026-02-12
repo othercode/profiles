@@ -1,0 +1,8 @@
+{
+  "name": "laravel-engineering",
+  "description": "Laravel Engineering — conventions, workflows, and automation for Laravel + Vue.js development",
+  "version": "1.0.0",
+  "author": {
+    "name": "otherCode"
+  }
+}

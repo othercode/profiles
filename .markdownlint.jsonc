@@ -1,0 +1,12 @@
+{
+  // Allow long lines in skills (code examples, tables)
+  "MD013": false,
+  // Allow inline HTML (used in some markdown patterns)
+  "MD033": false,
+  // Allow duplicate headings across different files
+  "MD024": { "siblings_only": true },
+  // Allow trailing punctuation in headings (e.g. "Style Rules (CRITICAL)")
+  "MD026": false,
+  // Allow multiple top-level headings (skills have frontmatter + heading)
+  "MD025": false
+}
