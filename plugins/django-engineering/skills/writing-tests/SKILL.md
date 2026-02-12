@@ -25,7 +25,7 @@ description: Use when writing tests, creating test files, naming test functions,
 
 Tests are **colocated** with the code they test, using `*_test.py` suffix.
 
-```
+```text
 # Pattern
 module/feature.py → module/feature_test.py
 
@@ -37,7 +37,7 @@ userprofile/handlers.py → userprofile/handlers_test.py
 
 ### 2. Function Naming
 
-```
+```text
 test_<subject>_should[_not]_<expectation>[_when_<scenario>]
 ```
 
@@ -212,7 +212,7 @@ def test_user_should_be_created_with_default_settings(
 
 ### 8. Conftest Organization
 
-```
+```text
 proxysubscription/
 ├── conftest.py              # Module-level shared fixtures
 ├── plan_change.py

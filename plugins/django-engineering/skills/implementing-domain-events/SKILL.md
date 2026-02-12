@@ -19,6 +19,7 @@ This skill provides guidance for implementing domain event bus architecture in P
 > **Events are REGISTERED when they conceptually happen (in the Domain), but PUBLISHED at the end of Service/Use Case execution (after transaction commits).**
 
 This separation ensures:
+
 - Domain purity (aggregates don't know about infrastructure)
 - Transactional safety (no orphan events on rollback)
 - Clear responsibilities per layer
@@ -28,6 +29,7 @@ This separation ensures:
 **Pattern:** Publisher Domain → Event Bus → Consumer Domain (one-way dependency)
 
 **Benefits:**
+
 - **Decoupling**: Publishers don't know about consumers
 - **Extensibility**: New handlers subscribe without changing publishers
 - **Async by design**: Events map to task queues (Celery, etc.)
@@ -35,7 +37,7 @@ This separation ensures:
 
 ## Layer Responsibilities
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                    AGGREGATE (Domain Layer)                      │
 │  Events registered HERE - when they conceptually happen          │
@@ -72,7 +74,7 @@ This separation ensures:
 
 ## Package Structure
 
-```
+```text
 <project>/shared/event_bus/
 ├── __init__.py          # Public exports
 ├── contracts.py         # DomainEvent, EventBus, HasDomainEventsMixin
@@ -172,6 +174,7 @@ class EntityUpdatedEvent(DomainEvent):
 ```
 
 **Rules:**
+
 - Always use `@register_event` decorator
 - Always use `frozen=True` (immutability)
 - Always use `kw_only=True` (explicit field names)
@@ -306,6 +309,7 @@ register_handler("EntityCreatedEvent", handle_entity_created)
 ```
 
 **Handler Guidelines:**
+
 - Keep handlers focused on one responsibility
 - Use async tasks for heavy processing
 - Handle exceptions gracefully (will retry via task queue)
@@ -402,7 +406,7 @@ def get_event_bus(driver: str | None = None) -> EventBus:
 
 ## Event Flow Sequence
 
-```
+```text
 1. API/Webhook receives request
           │
           ▼

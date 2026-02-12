@@ -8,5 +8,9 @@
   // Allow trailing punctuation in headings (e.g. "Style Rules (CRITICAL)")
   "MD026": false,
   // Allow multiple top-level headings (skills have frontmatter + heading)
-  "MD025": false
+  "MD025": false,
+  // Persona files and SKILL.md with frontmatter don't need h1 first line
+  "MD041": false,
+  // Table column spacing style varies across skill files
+  "MD060": false
 }

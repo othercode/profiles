@@ -1,4 +1,4 @@
-# profiles
+# Profiles
 
 Engineering profiles for Claude Code — stack-specific conventions, workflows, and automation by [otherCode](https://github.com/othercode).
 
@@ -12,13 +12,13 @@ Profiles don't teach Claude what a framework is — it already knows. Instead, t
 
 Add the marketplace:
 
-```
+```sh
 /plugin marketplace add othercode/profiles
 ```
 
 Install a profile:
 
-```
+```sh
 /plugin install <profile-name>@othercode
 ```
 
@@ -51,7 +51,7 @@ A profile provides three layers:
 
 ## Creating a new profile
 
-```
+```text
 plugins/<name>/
 ├── .claude-plugin/
 │   └── plugin.json
