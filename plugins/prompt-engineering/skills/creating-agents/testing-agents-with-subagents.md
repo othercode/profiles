@@ -444,6 +444,10 @@ Cited: "I can only document, not evaluate"
 | **REFACTOR**     | Close loopholes                        | Add rules for new violations            |
 | **Stay GREEN**   | Re-verify                              | Agent still complies after refactoring  |
 
+## Worked Example
+
+For a complete walkthrough of scope boundary testing — including 4 test scenarios, 4 agent variants (NULL through production-ready), iteration tracking, and observed violations — see examples/SCOPE_BOUNDARY_TESTING.md
+
 ## The Bottom Line
 
 **Agent creation IS TDD. Same principles, same cycle, same benefits.**

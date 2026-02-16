@@ -385,6 +385,10 @@ Tests pass once ≠ bulletproof.
 | **REFACTOR**     | Close loopholes                 | Add counters for new rationalizations  |
 | **Stay GREEN**   | Re-verify                       | Agent still complies after refactoring |
 
+## Worked Example
+
+For a complete walkthrough of skill discovery testing — including 4 pressure scenarios, 4 CLAUDE.md doc variants (NULL through production-ready), and testing protocol — see examples/CLAUDE_MD_TESTING.md
+
 ## The Bottom Line
 
 **Skill creation IS TDD. Same principles, same cycle, same benefits.**

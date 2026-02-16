@@ -1,3 +1,6 @@
+<!-- Last reviewed: 2026-02-16 | Source: https://code.claude.com/docs/en/sub-agents -->
+<!-- If this file is more than 90 days stale, verify content against the source URL before relying on it -->
+
 # Sub-agents
 
 > Configure specialized sub-agents that Claude can delegate to for specific tasks.
@@ -55,6 +58,9 @@ You are a specialist at [domain]. Your job is to [responsibility].
 | `permissionMode` | No | Controls permission prompts (see below) |
 | `skills` | No | Skills to preload into agent context |
 | `hooks` | No | Lifecycle hooks scoped to this agent |
+| `maxTurns` | No | Maximum agentic turns before the subagent stops |
+| `mcpServers` | No | MCP servers available to this subagent |
+| `memory` | No | Persistent memory scope: `user`, `project`, or `local` |
 
 ### Tool restrictions
 
@@ -112,6 +118,7 @@ model: opus
 | `acceptEdits` | Auto-accept file edits |
 | `dontAsk` | Skip confirmations |
 | `bypassPermissions` | Skip all prompts |
+| `delegate` | Coordination-only for agent team leads |
 | `plan` | Planning only, no execution |
 
 **Security note:** Use restrictive modes by default. Only escalate when necessary.
@@ -348,6 +355,73 @@ configure systems safely.
 5. Verify: Confirm changes worked correctly
 
 ```text
+
+## Managing agents
+
+### The /agents command
+
+Run `/agents` to interactively create, edit, delete, and view subagents. This is the recommended way to manage agents.
+
+### CLI-defined agents (--agents flag)
+
+Pass agents as JSON for session-only use:
+
+```bash
+claude --agents '{
+  "code-reviewer": {
+    "description": "Expert code reviewer.",
+    "prompt": "You are a senior code reviewer.",
+    "tools": ["Read", "Grep", "Glob"],
+    "model": "sonnet"
+  }
+}'
+```text
+
+### Persistent memory
+
+The `memory` field gives agents a persistent directory across conversations:
+
+```yaml
+memory: user
+```text
+
+| Scope | Location | Use when |
+|-------|----------|----------|
+| `user` | `~/.claude/agent-memory/<name>/` | Learnings apply across all projects |
+| `project` | `.claude/agent-memory/<name>/` | Knowledge is project-specific, shareable via VCS |
+| `local` | `.claude/agent-memory-local/<name>/` | Project-specific, not version controlled |
+
+When enabled, the agent's system prompt includes the first 200 lines of `MEMORY.md` from the memory directory. Read, Write, and Edit tools are automatically enabled.
+
+### Spawn restrictions
+
+Restrict which subagents an agent can spawn using `Task(agent_type)` syntax:
+
+```yaml
+tools: Task(worker, researcher), Read, Bash
+```text
+
+This is an allowlist — only listed agents can be spawned. Omitting `Task` entirely prevents spawning any subagents.
+
+### Background and foreground execution
+
+- **Foreground**: Blocks the main conversation. Permission prompts pass through to the user.
+- **Background**: Runs concurrently. Permissions are pre-approved at launch. Use `Ctrl+B` to background a running task.
+
+Agents can be resumed after completion using their agent ID. Claude receives the ID when a subagent completes.
+
+### Auto-compaction
+
+Subagents support automatic compaction at ~95% capacity. Set `CLAUDE_AUTOCOMPACT_PCT_OVERRIDE` to trigger earlier.
+
+### Agent lifecycle hooks
+
+Define hooks in `settings.json` for subagent lifecycle events:
+
+| Event | Matcher | Fires when |
+|-------|---------|------------|
+| `SubagentStart` | Agent type name | Subagent begins execution |
+| `SubagentStop` | Agent type name | Subagent completes |
 
 ## Preloading skills
 

@@ -1,3 +1,6 @@
+<!-- Last reviewed: 2026-02-16 | Source: https://docs.anthropic.com/en/docs/agents-and-tools/agent-skills/best-practices -->
+<!-- If this file is more than 90 days stale, verify content against the source URL before relying on it -->
+
 # Skill authoring best practices
 
 > Learn how to write effective Skills that Claude can discover and use successfully.

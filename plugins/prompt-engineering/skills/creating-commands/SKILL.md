@@ -757,6 +757,10 @@ If no arguments provided, use default: [default behavior]
 [Optional: Expected output format]
 ```text
 
+## Worked Example
+
+For a complete walkthrough of argument handling TDD — including 4 test scenarios, 3 iterations from minimal to production command, and key lessons — see examples/ARGUMENT_HANDLING_TESTING.md
+
 ## The Bottom Line
 
 **Commands are the interface, skills are the methodology.**

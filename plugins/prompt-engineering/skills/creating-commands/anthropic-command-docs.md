@@ -1,6 +1,12 @@
+<!-- Last reviewed: 2026-02-16 | Source: https://code.claude.com/docs/en/skills -->
+<!-- Commands have been merged into skills. This file retains command-specific guidance. -->
+<!-- If this file is more than 90 days stale, verify content against the source URL before relying on it -->
+
 # Slash Commands
 
 > Create custom slash commands to automate repetitive workflows in Claude Code.
+
+**Note (2026-02):** Custom slash commands have been merged into skills. A file at `.claude/commands/review.md` and a skill at `.claude/skills/review/SKILL.md` both create `/review` and work the same way. Your existing `.claude/commands/` files keep working. Skills add optional features: a directory for supporting files, frontmatter to control invocation, and Claude can load them automatically when relevant.
 
 Slash commands provide quick access to stored prompts and procedures. Built-in commands like `/help`, `/clear`, and `/compact` are always available. You can create custom commands for your specific workflows.
 
@@ -77,6 +83,11 @@ Invoke with: `/project:security-scan src/`
 | `allowed-tools` | string | Comma-separated list of tools command can use |
 | `model` | string | Model override (`haiku`, `sonnet`, `opus`, or full model ID) |
 | `argument-hint` | string | Shows expected arguments in help (e.g., `[file] [options]`) |
+| `disable-model-invocation` | boolean | Set `true` to prevent Claude from auto-triggering (skills only) |
+| `user-invocable` | boolean | Set `false` to hide from `/` menu (skills only) |
+| `context` | string | Set to `fork` to run in a forked subagent context (skills only) |
+| `agent` | string | Subagent type when `context: fork` is set (skills only) |
+| `hooks` | object | Lifecycle hooks scoped to this skill (skills only) |
 
 ### Tool Restriction Syntax
 
@@ -126,6 +137,32 @@ Fix issue #$1 with priority level: $2
 ```text
 
 Usage: `/project:fix 123 high` → "$1" is "123", "$2" is "high"
+
+### Indexed Arguments ($ARGUMENTS[N])
+
+Access specific arguments by 0-based index:
+
+```markdown
+Migrate the $ARGUMENTS[0] component from $ARGUMENTS[1] to $ARGUMENTS[2].
+```text
+
+Or use the `$N` shorthand (equivalent):
+
+```markdown
+Migrate the $0 component from $1 to $2.
+```text
+
+Usage: `/project:migrate SearchBar React Vue` → `$0`="SearchBar", `$1`="React", `$2`="Vue"
+
+### Session ID (${CLAUDE_SESSION_ID})
+
+Access the current session ID for logging or correlation:
+
+```markdown
+Log activity to logs/${CLAUDE_SESSION_ID}.log:
+
+$ARGUMENTS
+```text
 
 ### Bash Execution (!`command`)
 
