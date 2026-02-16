@@ -21,6 +21,14 @@
       "version": "1.0.0",
       "category": "backend",
       "tags": ["python", "django", "drf", "rest-api"]
+    },
+    {
+      "name": "prompt-engineering",
+      "source": "./plugins/prompt-engineering",
+      "description": "Prompt Engineering — TDD-driven creation of skills, agents, and commands for Claude Code",
+      "version": "1.0.0",
+      "category": "tooling",
+      "tags": ["prompts", "skills", "agents", "commands", "tdd", "claude-code"]
     }
   ]
 }
