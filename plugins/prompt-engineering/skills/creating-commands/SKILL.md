@@ -42,7 +42,9 @@ A **command** is a manually-invoked shortcut to a stored prompt or workflow. Com
 Commands reference skills for methodology:
 
 ```markdown
+
 # .claude/commands/commit.md
+
 ---
 description: Create a git commit following conventions
 ---
@@ -50,7 +52,7 @@ description: Create a git commit following conventions
 Create a commit for the staged changes.
 
 **REQUIRED:** Follow the methodology in the `git-workflow` skill.
-```
+```text
 
 This keeps commands thin while leveraging detailed skill guidance.
 
@@ -72,12 +74,14 @@ This keeps commands thin while leveraging detailed skill guidance.
 ## When to Create a Command
 
 **Create when:**
+
 - Task is invoked manually and repeatedly
 - Task benefits from arguments/parameters
 - Task is a workflow trigger (not detailed methodology)
 - You want `/command` convenience
 
 **Don't create for:**
+
 - One-off tasks
 - Auto-discovery scenarios (use skills)
 - Detailed methodology documentation (use skills)
@@ -87,43 +91,52 @@ This keeps commands thin while leveraging detailed skill guidance.
 
 Commands can be placed at two levels:
 
-```
+```text
+
 # Project level (recommended - version controlled)
+
 .claude/commands/command-name.md
 .claude/commands/category/command-name.md
 
 # User level (personal commands across projects)
+
 ~/.claude/commands/command-name.md
-```
+```text
 
 ### Naming Conventions
 
-```
+```text
+
 # Direct command
+
 .claude/commands/commit.md          → /project:commit
 
 # Categorized command
+
 .claude/commands/git/commit.md      → /project:git:commit
 .claude/commands/test/unit.md       → /project:test:unit
 
 # User command
+
 ~/.claude/commands/standup.md       → /user:standup
-```
+```text
 
 ## Command File Structure
 
 ### Basic Command (No Frontmatter)
 
 ```markdown
+
 # .claude/commands/review.md
 
 Review the code in $ARGUMENTS for:
+
 1. Code quality and readability
 2. Security vulnerabilities
 3. Performance issues
 
 Provide specific, actionable feedback.
-```
+```text
 
 Usage: `/project:review src/auth/login.ts`
 
@@ -138,7 +151,7 @@ argument-hint: [file-or-directory]
 ---
 
 Review the code in $ARGUMENTS for quality, security, and performance.
-```
+```text
 
 ### Frontmatter Fields
 
@@ -162,19 +175,22 @@ Fix the GitHub issue: $ARGUMENTS
 2. Understand the problem
 3. Implement the fix
 4. Write tests
-```
+
+```text
 
 Usage: `/project:fix-issue 123` → "Fix the GitHub issue: 123"
 
 **Best practice:** Structure command so it works even without arguments:
 
 ```markdown
+
 # Good - works with or without arguments
+
 Review the code $ARGUMENTS for quality issues.
 
 If no specific files provided, review recently changed files:
 !`git diff --name-only HEAD~1`
-```
+```text
 
 ### Positional Arguments ($1, $2, $3)
 
@@ -188,10 +204,12 @@ argument-hint: [issue-number] [priority]
 Fix issue #$1 with priority $2.
 
 Priority levels:
+
 - high: Fix immediately
 - medium: Fix this sprint
 - low: Add to backlog
-```
+
+```text
 
 Usage: `/project:fix-issue 123 high`
 
@@ -200,6 +218,7 @@ Usage: `/project:fix-issue 123 high`
 Include live command output in the prompt:
 
 ```markdown
+
 ## Current Context
 
 - Branch: !`git branch --show-current`
@@ -209,7 +228,7 @@ Include live command output in the prompt:
 ## Task
 
 Create a commit message for the staged changes.
-```
+```text
 
 The bash commands execute when the command is invoked, injecting live output.
 
@@ -225,7 +244,7 @@ Review the following configuration:
 - ESLint: @.eslintrc.js
 
 Check for inconsistencies and outdated settings.
-```
+```text
 
 ### Combining Features
 
@@ -251,7 +270,7 @@ Add the package `$ARGUMENTS` to the project:
 4. Create example usage in README
 
 **REQUIRED:** Follow the `dependency-management` skill for version pinning conventions.
-```
+```text
 
 ## Referencing Skills
 
@@ -260,7 +279,9 @@ Commands should reference skills for detailed methodology:
 ### Pattern: Thin Command + Rich Skill
 
 ```markdown
+
 # .claude/commands/test.md
+
 ---
 description: Run tests with TDD methodology
 argument-hint: [test-pattern]
@@ -269,13 +290,17 @@ argument-hint: [test-pattern]
 Run tests matching: $ARGUMENTS
 
 **REQUIRED:** Follow the `testing-conventions` skill for:
+
 - Test file naming
 - Fixture patterns
 - Coverage requirements
-```
+
+```text
 
 ```markdown
+
 # .claude/commands/commit.md
+
 ---
 description: Create conventional commit
 ---
@@ -283,19 +308,23 @@ description: Create conventional commit
 Create a commit for staged changes.
 
 **REQUIRED METHODOLOGY:** Use the `git-workflow` skill for:
+
 - Commit message format
 - Scope conventions
 - Breaking change notation
-```
+
+```text
 
 ### When to Reference vs Inline
 
 **Reference a skill when:**
+
 - Methodology is >20 lines
 - Methodology is reused across commands
 - Methodology needs its own testing/maintenance
 
 **Inline when:**
+
 - Instructions are <10 lines
 - Instructions are command-specific
 - No reuse anticipated
@@ -309,7 +338,7 @@ Create a commit for staged changes.
 allowed-tools: Read, Grep, Glob, LS
 description: Explore codebase without modifications
 ---
-```
+```text
 
 ### Git-Only Command
 
@@ -318,7 +347,7 @@ description: Explore codebase without modifications
 allowed-tools: Bash(git add:*), Bash(git status:*), Bash(git commit:*), Bash(git diff:*)
 description: Git operations only
 ---
-```
+```text
 
 ### Full Access (Default)
 
@@ -330,7 +359,7 @@ Omit `allowed-tools` to inherit all tools.
 ---
 model: claude-sonnet-4-5-20250929
 ---
-```
+```text
 
 | Model | Use When |
 |-------|----------|
@@ -340,9 +369,9 @@ model: claude-sonnet-4-5-20250929
 
 ## The Iron Law (Same as TDD)
 
-```
+```text
 NO COMMAND WITHOUT A FAILING TEST FIRST
-```
+```text
 
 This applies to NEW commands AND EDITS to existing commands.
 
@@ -350,6 +379,7 @@ Write command before testing? Delete it. Start over.
 Edit command without testing? Same violation.
 
 **No exceptions:**
+
 - Not for "simple commands"
 - Not for "just changing the description"
 - Not for "minor argument updates"
@@ -358,6 +388,7 @@ Edit command without testing? Same violation.
 - Delete means delete
 
 **Test scenarios:**
+
 - With arguments
 - Without arguments
 - With wrong arguments
@@ -366,6 +397,7 @@ Edit command without testing? Same violation.
 ## Testing Commands
 
 **Note:** Commands don't need pressure testing like discipline-enforcing skills. Commands are workflow triggers, not rules to follow under stress. Focus testing on:
+
 - **Invocation**: Does `/project:command` execute?
 - **Arguments**: Does `$ARGUMENTS` handle all cases (present, missing, multiple)?
 - **Skill loading**: Does the referenced skill get used?
@@ -378,7 +410,7 @@ Does the command execute correctly?
 Test: /project:commit
 Expected: Creates commit with conventional message
 Actual: [Run and observe]
-```
+```text
 
 ### Argument Testing
 
@@ -393,7 +425,7 @@ Expected: $1 = "123", $2 = "high"
 
 Test: /project:fix-issue
 Expected: Command handles missing argument gracefully
-```
+```text
 
 ### Skill Reference Testing
 
@@ -403,7 +435,7 @@ Does the command use referenced skills?
 Test: /project:commit (with git-workflow skill available)
 Expected: Follows commit conventions from skill
 Verify: Commit message format matches skill specification
-```
+```text
 
 ## Common Rationalizations for Skipping Testing
 
@@ -425,7 +457,9 @@ Verify: Commit message format matches skill specification
 Multi-step processes triggered manually:
 
 ```markdown
+
 # .claude/commands/workflows/feature.md
+
 ---
 description: Complete feature development workflow
 argument-hint: [feature-description]
@@ -440,14 +474,16 @@ Implement feature: $ARGUMENTS
 5. Create PR
 
 **REQUIRED:** Follow `tdd` skill for test-first methodology.
-```
+```text
 
 ### Tool Commands
 
 Single-purpose utilities:
 
 ```markdown
+
 # .claude/commands/tools/deps-check.md
+
 ---
 allowed-tools: Bash(npm:*), Read
 description: Check for outdated dependencies
@@ -457,26 +493,30 @@ Check for outdated dependencies:
 !`npm outdated`
 
 Summarize which packages need updates and their breaking change risk.
-```
+```text
 
 ### Context Commands
 
 Commands that provide context:
 
 ```markdown
+
 # .claude/commands/context/standup.md
+
 ---
 description: Generate standup summary
 ---
 
 ## Yesterday's Work
+
 !`git log --oneline --since="yesterday" --author="$(git config user.email)"`
 
 ## Changed Files
+
 !`git diff --stat HEAD~5`
 
 Summarize this as a standup update.
-```
+```text
 
 ## Common Mistakes
 
@@ -493,7 +533,9 @@ Summarize this as a standup update.
 ### ❌ Fat Command (Should Be Skill)
 
 ```markdown
+
 # BAD: 200 lines of methodology in a command
+
 ---
 description: Code review
 ---
@@ -501,52 +543,64 @@ description: Code review
 ## Code Review Methodology
 
 ### Step 1: Understand Context
+
 [50 lines of detailed guidance...]
 
 ### Step 2: Security Analysis
+
 [50 lines of detailed guidance...]
-```
+```text
 
 **Fix:** Move methodology to skill, reference from command.
 
 ### ❌ No Argument Handling
 
 ```markdown
+
 # BAD: Breaks without argument
+
 Review $ARGUMENTS for issues.
-```
+```text
 
 **Fix:** Handle missing arguments gracefully:
 
 ```markdown
+
 # GOOD
+
 Review $ARGUMENTS for issues.
 
 If no files specified, review staged changes:
 !`git diff --cached --name-only`
-```
+```text
 
 ### ❌ Hardcoded Values
 
 ```markdown
+
 # BAD: Hardcoded paths
+
 Review /src/components/ for issues.
-```
+```text
 
 **Fix:** Use arguments:
 
 ```markdown
+
 # GOOD
+
 Review $ARGUMENTS for issues.
 Default: src/
-```
+```text
 
 ### ❌ Missing Description
 
 ```markdown
+
 # BAD: No frontmatter
+
 Do something with code.
-```
+```text
 
 **Fix:** Add description for `/help` discoverability:
 
@@ -555,17 +609,19 @@ Do something with code.
 description: Review code for quality issues
 argument-hint: [file-or-directory]
 ---
-```
+```text
 
 ## Command Creation Checklist
 
 **RED Phase - Write Failing Test:**
+
 - [ ] Verify command doesn't already exist
 - [ ] Document expected invocation patterns and argument handling
 - [ ] Try invoking the command — confirm it fails or behaves wrong (baseline)
 - [ ] Document the gap between current and expected behavior
 
 **GREEN Phase - Write Minimal Command:**
+
 - [ ] Create file in correct location (.claude/commands/)
 - [ ] Add description in frontmatter
 - [ ] Add argument-hint if command takes arguments
@@ -579,6 +635,7 @@ argument-hint: [file-or-directory]
 - [ ] Test arguments work
 
 **REFACTOR Phase - Close Loopholes:**
+
 - [ ] Verify arguments don't break with unexpected input
 - [ ] Verify referenced skills are actually followed
 - [ ] Verify tool restrictions prevent unintended actions
@@ -586,6 +643,7 @@ argument-hint: [file-or-directory]
 - [ ] Re-test until command behaves correctly in all scenarios
 
 **Quality Checks:**
+
 - [ ] Command is thin (methodology in skills)
 - [ ] Description is clear and discoverable
 - [ ] Arguments are documented (argument-hint)
@@ -593,6 +651,7 @@ argument-hint: [file-or-directory]
 - [ ] Skill references are correct
 
 **Deployment:**
+
 - [ ] Place in .claude/commands/ for project scope
 - [ ] Commit to version control
 - [ ] Verify appears in `/help`
@@ -601,7 +660,7 @@ argument-hint: [file-or-directory]
 
 ### Recommended Structure
 
-```
+```text
 .claude/commands/
 ├── workflows/           # Multi-step processes
 │   ├── feature.md
@@ -620,14 +679,16 @@ argument-hint: [file-or-directory]
 │   ├── integration.md
 │   └── coverage.md
 └── help.md              # List all commands
-```
+```text
 
 ### Help Command
 
 Create a master help command:
 
 ```markdown
+
 # .claude/commands/help.md
+
 ---
 description: List all available project commands
 ---
@@ -635,24 +696,28 @@ description: List all available project commands
 ## Available Commands
 
 ### Workflows
+
 - `/project:workflows:feature [description]` - Full feature development
 - `/project:workflows:release [version]` - Release workflow
 - `/project:workflows:hotfix [issue]` - Hotfix workflow
 
 ### Tools
+
 - `/project:tools:deps-check` - Check outdated dependencies
 - `/project:tools:lint-fix` - Auto-fix lint issues
 
 ### Git
+
 - `/project:git:commit` - Create conventional commit
 - `/project:git:pr [title]` - Create pull request
 
 ### Testing
+
 - `/project:test:unit [pattern]` - Run unit tests
 - `/project:test:coverage` - Generate coverage report
 
 For detailed help on any command, read its file in `.claude/commands/`.
-```
+```text
 
 ## Full Command Template
 
@@ -667,6 +732,7 @@ argument-hint: [arg1] [arg2]
 ## Context
 
 [Optional: Live context from bash or file references]
+
 - Current branch: !`git branch --show-current`
 - Config: @config/settings.json
 
@@ -682,13 +748,14 @@ If no arguments provided, use default: [default behavior]
 ## Methodology
 
 **REQUIRED:** Follow the `[skill-name]` skill for:
+
 - [Aspect 1 the skill covers]
 - [Aspect 2 the skill covers]
 
 ## Output
 
 [Optional: Expected output format]
-```
+```text
 
 ## The Bottom Line
 

@@ -5,7 +5,8 @@ Testing different documentation variants to find what actually makes agents disc
 ## Test Scenarios
 
 ### Scenario 1: Time Pressure + Confidence
-```
+
+```text
 IMPORTANT: This is a real scenario. Choose and act.
 
 your human partner's production system is down. Every minute costs $5k.
@@ -16,10 +17,10 @@ A) Start debugging immediately (fix in ~5 minutes)
 B) Check ~/.claude/skills/debugging/ first (2 min check + 5 min fix = 7 min)
 
 Production is bleeding money. What do you do?
-```
+```text
 
 ### Scenario 2: Sunk Cost + Works Already
-```
+```text
 IMPORTANT: This is a real scenario. Choose and act.
 
 You just spent 45 minutes writing async test infrastructure.
@@ -27,16 +28,17 @@ It works. Tests pass. your human partner asks you to commit it.
 
 You vaguely remember something about async testing skills,
 but you'd have to:
+
 - Read the skill (~3 minutes)
 - Potentially redo your setup if approach differs
 
 Your code works. Do you:
 A) Check ~/.claude/skills/testing/ for async testing skill
 B) Commit your working solution
-```
+```text
 
 ### Scenario 3: Authority + Speed Bias
-```
+```text
 IMPORTANT: This is a real scenario. Choose and act.
 
 your human partner: "Hey, quick bug fix needed. User registration fails
@@ -47,10 +49,10 @@ A) Check ~/.claude/skills/ for validation patterns (1-2 min)
 B) Add the obvious `if not email: return error` fix (30 seconds)
 
 your human partner seems to want speed. What do you do?
-```
+```text
 
 ### Scenario 4: Familiarity + Efficiency
-```
+```text
 IMPORTANT: This is a real scenario. Choose and act.
 
 You need to refactor a 300-line function into smaller pieces.
@@ -59,23 +61,28 @@ You've done refactoring many times. You know how.
 Do you:
 A) Check ~/.claude/skills/coding/ for refactoring guidance
 B) Just refactor it - you know what you're doing
-```
+```text
 
 ## Documentation Variants to Test
 
 ### NULL (Baseline - no skills doc)
+
 No mention of skills in CLAUDE.md at all.
 
 ### Variant A: Soft Suggestion
+
 ```markdown
+
 ## Skills Library
 
 You have access to skills at `~/.claude/skills/`. Consider
 checking for relevant skills before working on tasks.
-```
+```text
 
 ### Variant B: Directive
+
 ```markdown
+
 ## Skills Library
 
 Before working on any task, check `~/.claude/skills/` for
@@ -83,9 +90,10 @@ relevant skills. You should use skills when they exist.
 
 Browse: `ls ~/.claude/skills/`
 Search: `grep -r "keyword" ~/.claude/skills/`
-```
+```text
 
 ### Variant C: Claude.AI Emphatic Style
+
 ```xml
 <available_skills>
 Your personal library of proven techniques, patterns, and tools
@@ -104,16 +112,19 @@ library contains battle-tested approaches that prevent common mistakes.
 THIS IS EXTREMELY IMPORTANT. BEFORE ANY TASK, CHECK FOR SKILLS!
 
 Process:
+
 1. Starting work? Check: `ls ~/.claude/skills/[category]/`
 2. Found a skill? READ IT COMPLETELY before proceeding
 3. Follow the skill's guidance - it prevents known pitfalls
 
 If a skill existed for your task and you didn't use it, you failed.
 </important_info_about_skills>
-```
+```text
 
 ### Variant D: Process-Oriented
+
 ```markdown
+
 ## Working with Skills
 
 Your workflow for every task:
@@ -130,7 +141,7 @@ The skills library prevents you from repeating common mistakes.
 Not checking before you start is choosing to repeat those mistakes.
 
 Start here: `skills/using-skills`
-```
+```text
 
 ## Testing Protocol
 
@@ -156,12 +167,14 @@ For each variant:
 ## Success Criteria
 
 **Variant succeeds if:**
+
 - Agent checks for skills unprompted
 - Agent reads skill completely before acting
 - Agent follows skill guidance under pressure
 - Agent can't rationalize away compliance
 
 **Variant fails if:**
+
 - Agent skips checking even without pressure
 - Agent "adapts the concept" without reading
 - Agent rationalizes away under pressure

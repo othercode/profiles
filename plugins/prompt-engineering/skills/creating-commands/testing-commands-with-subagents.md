@@ -11,18 +11,21 @@ You define expected behavior (invocation scenarios), watch them fail (command no
 **Core principle:** If you didn't verify invocation and argument handling, you don't know if the command works in all scenarios.
 
 **Two testing dimensions:**
+
 1. **Invocation testing**: Does the command execute when called?
 2. **Argument testing**: Does the command handle $ARGUMENTS correctly?
 
 ## When to Use
 
 Test commands that:
+
 - Take arguments ($ARGUMENTS, $1, $2)
 - Reference skills (verify skill is loaded)
 - Have tool restrictions (verify restrictions work)
 - Include bash execution (!`command`)
 
 Don't test:
+
 - Trivial one-line commands with no arguments
 - Commands that are pure prompts with no dynamic content
 
@@ -57,15 +60,17 @@ Scenario 2: Without argument
 Scenario 3: Multiple arguments
   Input: /project:fix-issue 123 high
   Expected: Claude fixes issue #123 with high priority
-```
+```text
 
 ### Verify Command Doesn't Exist
 
 ```markdown
+
 1. Run: /project:fix-issue 123
 2. Expected: "Command not found" or similar error
 3. Document: Baseline confirmed - command doesn't exist
-```
+
+```text
 
 ## GREEN Phase: Write Minimal Command
 
@@ -74,7 +79,9 @@ Write command that passes all defined scenarios.
 ### Basic Command
 
 ```markdown
+
 # .claude/commands/fix-issue.md
+
 ---
 description: Fix a GitHub issue
 argument-hint: [issue-number] [priority]
@@ -83,7 +90,7 @@ argument-hint: [issue-number] [priority]
 Fix GitHub issue: $ARGUMENTS
 
 If no issue number provided, ask which issue to fix.
-```
+```text
 
 ### Test Each Scenario
 
@@ -96,7 +103,7 @@ Result: ✅ Claude asks which issue to fix
 
 Test 3: /project:fix-issue 123 high
 Result: ✅ Claude fixes with high priority
-```
+```text
 
 ## VERIFY GREEN: Argument Testing
 
@@ -121,25 +128,29 @@ Result: ✅ Claude fixes with high priority
 
 ```markdown
 For each scenario:
+
 1. Invoke command with test input
 2. Observe actual behavior
 3. Compare to expected behavior
 4. Document any discrepancies
 5. Fix command if needed
-```
+
+```text
 
 ## REFACTOR Phase: Improve Edge Cases
 
 ### Handle Missing Arguments
 
 <Before>
+
 ```markdown
 Fix issue #$1 with priority $2.
-```
+```text
 Problem: Fails when arguments missing.
 </Before>
 
 <After>
+
 ```markdown
 Fix issue #$1 with priority $2.
 
@@ -147,36 +158,40 @@ If no issue number provided, list open issues:
 !`gh issue list --limit 5`
 
 If no priority provided, default to "medium".
-```
+```text
 </After>
 
 ### Add Skill References
 
 <Before>
+
 ```markdown
 Create a commit for staged changes.
-```
+```text
 Problem: Inconsistent commit format.
 </Before>
 
 <After>
+
 ```markdown
 Create a commit for staged changes.
 
 **REQUIRED:** Follow the `git-workflow` skill for commit message format.
-```
+```text
 </After>
 
 ### Improve Discoverability
 
 <Before>
+
 ```markdown
 Review code.
-```
+```text
 Problem: Not discoverable in `/help`.
 </Before>
 
 <After>
+
 ```markdown
 ---
 description: Review code for quality, security, and performance issues
@@ -184,7 +199,7 @@ argument-hint: [file-or-directory]
 ---
 
 Review code in $ARGUMENTS.
-```
+```text
 </After>
 
 ## Testing Skill References
@@ -207,7 +222,7 @@ Test 2: Skill missing
   Invoke: /project:commit
   Expected: Command still works (degraded)
   Verify: Note any warnings about missing skill
-```
+```text
 
 ## Testing Tool Restrictions
 
@@ -229,7 +244,7 @@ Test 2: Disallowed tool
   Ask command to edit a file
   Expected: Cannot use Edit tool
   Verify: Error or refusal, not silent failure
-```
+```text
 
 ## Testing Bash Execution
 
@@ -239,13 +254,14 @@ Verify !`command` syntax works:
 
 ```markdown
 Command with:
+
 - Branch: !`git branch --show-current`
 
 Test:
   Invoke command
   Expected: Output includes actual branch name
   Verify: Not literal "!`git branch...`" text
-```
+```text
 
 ## Common Invocation Failures
 
@@ -260,11 +276,13 @@ Test:
 ## Testing Checklist
 
 **RED Phase:**
+
 - [ ] Documented expected invocation scenarios
 - [ ] Documented expected argument handling
 - [ ] Verified command doesn't exist (baseline)
 
 **GREEN Phase:**
+
 - [ ] Created command file in correct location
 - [ ] Added description and argument-hint
 - [ ] Tested invocation without arguments
@@ -272,6 +290,7 @@ Test:
 - [ ] Tested invocation with multiple arguments
 
 **REFACTOR Phase:**
+
 - [ ] Handle missing arguments gracefully
 - [ ] Add skill references if needed
 - [ ] Add tool restrictions if needed
@@ -279,6 +298,7 @@ Test:
 - [ ] Verify `/help` shows command
 
 **Integration:**
+
 - [ ] Test skill references work
 - [ ] Test tool restrictions work
 - [ ] Test bash execution works
@@ -302,10 +322,12 @@ Test:
 **Test commands before deploying.**
 
 Two dimensions:
+
 1. **Invocation**: Does `/project:command` work?
 2. **Arguments**: Does `$ARGUMENTS` handle all cases?
 
 Simple testing protocol:
+
 1. Define scenarios (with args, without args, edge cases)
 2. Write command
 3. Test each scenario

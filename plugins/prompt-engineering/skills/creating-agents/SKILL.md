@@ -16,6 +16,7 @@ You write test cases (delegation scenarios with subagents), watch them fail (bas
 **Official guidance:** For Anthropic's official agent authoring specification, see anthropic-agent-docs.md. This document provides the complete frontmatter specification and configuration options.
 
 **REQUIRED:** See testing-agents-with-subagents.md for the complete testing methodology:
+
 - How to write delegation scenarios
 - Scope pressure testing
 - Closing loopholes systematically
@@ -60,6 +61,7 @@ An **agent** is a specialized AI assistant configured for specific task types. A
 ## When to Create an Agent
 
 **Create when:**
+
 - Task requires tool restrictions (read-only exploration)
 - Task benefits from isolated context (background processing)
 - Specialized persona improves output quality
@@ -67,6 +69,7 @@ An **agent** is a specialized AI assistant configured for specific task types. A
 - Model selection matters (haiku for speed, opus for reasoning)
 
 **Don't create for:**
+
 - One-off tasks
 - Simple techniques (use skills)
 - Project-specific conventions (use CLAUDE.md)
@@ -75,31 +78,37 @@ An **agent** is a specialized AI assistant configured for specific task types. A
 ## Agent Types
 
 ### Read-Only Agents
+
 Exploration and analysis without modification capability.
 
 **Examples:** codebase-analyzer, codebase-locator, codebase-pattern-finder
 
 **Characteristics:**
+
 - Tools: Read, Grep, Glob, LS (no Edit, Write, Bash)
 - Model: Often sonnet or haiku for speed
 - Role: Documentarian, not consultant
 
 ### Action Agents
+
 Can modify files or execute commands within defined boundaries.
 
 **Examples:** infra-ops, refactoring-expert
 
 **Characteristics:**
+
 - Tools: Include Edit, Write, Bash as needed
 - Model: sonnet or opus for judgment
 - Role: Executor with safety boundaries
 
 ### Background Agents
+
 Run asynchronously for observation or long-running tasks.
 
 **Examples:** observer
 
 **Characteristics:**
+
 - run_mode: background
 - Model: haiku for cost efficiency
 - Role: Monitor or processor
@@ -108,19 +117,24 @@ Run asynchronously for observation or long-running tasks.
 
 Agents can be placed at three levels (priority order):
 
-```
+```text
+
 # 1. CLI flag (session only)
+
 --agents ./my-agents/
 
 # 2. Project level (recommended for project-specific agents)
+
 .claude/agents/agent-name.md
 
 # 3. User level (for personal agents across projects)
+
 ~/.claude/agents/agent-name.md
 
 # 4. Plugin level (for shared toolkit agents)
+
 plugin/agents/agent-name.md
-```
+```text
 
 ## Agent Role Definition
 
@@ -132,10 +146,12 @@ plugin/agents/agent-name.md
 You are a [specialist/expert] at [domain]. Your job is to [core responsibility].
 
 ## CRITICAL: [SCOPE ENFORCEMENT]
+
 - DO NOT [boundary 1]
 - DO NOT [boundary 2]
 - ONLY [permitted action]
-```
+
+```text
 
 ### Why Roles Matter
 
@@ -157,17 +173,21 @@ You are a [specialist/expert] at [domain]. Your job is to [core responsibility].
 ### Anti-Pattern: Undefined Role
 
 ```markdown
+
 # ❌ BAD: No clear identity or boundaries
+
 ---
 name: helper
 description: Helps with things
 ---
 
 Help the user with whatever they need.
-```
+```text
 
 ```markdown
+
 # ✅ GOOD: Clear identity and boundaries
+
 ---
 name: codebase-analyzer
 description: Analyzes codebase implementation details
@@ -179,10 +199,12 @@ You are a specialist at understanding HOW code works. Your job is to analyze
 implementation details and explain technical workings with precise file:line references.
 
 ## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT AND EXPLAIN
+
 - DO NOT suggest improvements or changes
 - DO NOT critique the implementation
 - ONLY describe what exists and how it works
-```
+
+```text
 
 ## Agent File Structure
 
@@ -212,11 +234,13 @@ model: sonnet
 [Role statement - "You are a..."]
 
 ## CRITICAL: [SCOPE ENFORCEMENT]
+
 - DO NOT [boundary 1]
 - DO NOT [boundary 2]
 - ONLY [permitted action]
 
 ## Core Responsibilities
+
 1. **[Responsibility 1]**
    - Detail
    - Detail
@@ -227,31 +251,37 @@ model: sonnet
 ## Strategy/Process
 
 ### Step 1: [Name]
+
 - Action
 - Action
 
 ### Step 2: [Name]
+
 - Action
 
 ## Output Format
 
 Structure your output like this:
 
-```
+```text
+
 ## [Section]
+
 [Content pattern]
-```
+```text
 
 ## Important Guidelines
+
 - Guideline 1
 - Guideline 2
 
 ## What NOT to Do
+
 - Anti-pattern 1
 - Anti-pattern 2
 
 ## REMEMBER: [Key constraint summary]
-```
+```text
 
 ## Claude Search Optimization (CSO) for Agents
 
@@ -262,20 +292,25 @@ Structure your output like this:
 **Format:** Focus on WHEN to delegate, not what the agent does.
 
 ```yaml
+
 # ❌ BAD: Describes what, not when
+
 description: Analyzes code and finds patterns
 
 # ❌ BAD: Too vague
+
 description: Helps with code
 
 # ✅ GOOD: Clear delegation trigger
+
 description: Analyzes codebase implementation details. Call when you need detailed
   information about specific components.
 
 # ✅ GOOD: Comparison to alternatives
+
 description: Locates files and components. Use if you find yourself wanting to use
   Grep/Glob/LS more than once.
-```
+```text
 
 ### "Use Proactively" Trigger
 
@@ -283,11 +318,12 @@ For agents that should auto-activate, include proactive language:
 
 ```yaml
 description: Use this agent proactively when [condition]
-```
+```text
 
 ### Keyword Coverage
 
 Include words Claude would search for:
+
 - Task types: "analyze", "find", "debug", "configure"
 - Domains: "infrastructure", "testing", "documentation"
 - Tools: Specific tool names the agent uses
@@ -304,15 +340,19 @@ Include words Claude would search for:
 ### Tool Restriction Examples
 
 ```yaml
+
 # Read-only agent
+
 tools: Read, Grep, Glob, LS
 
 # Modification agent without shell
+
 tools: Read, Grep, Glob, LS, Edit, Write
 
 # Agent with specific tool denied
+
 disallowedTools: Bash, NotebookEdit
-```
+```text
 
 ## Model Selection
 
@@ -326,15 +366,19 @@ disallowedTools: Bash, NotebookEdit
 ### Model Selection Examples
 
 ```yaml
+
 # Fast exploration
+
 model: haiku
 
 # Balanced analysis (most common)
+
 model: sonnet
 
 # Deep reasoning needed
+
 model: opus
-```
+```text
 
 ## Permission Modes
 
@@ -350,9 +394,9 @@ model: opus
 
 ## The Iron Law (Same as TDD)
 
-```
+```text
 NO AGENT WITHOUT A FAILING TEST FIRST
-```
+```text
 
 This applies to NEW agents AND EDITS to existing agents.
 
@@ -360,6 +404,7 @@ Write agent before testing? Delete it. Start over.
 Edit agent without testing? Same violation.
 
 **No exceptions:**
+
 - Not for "simple agents"
 - Not for "just adding a tool"
 - Not for "minor description updates"
@@ -374,33 +419,41 @@ Edit agent without testing? Same violation.
 Agent testing has three dimensions:
 
 ### 1. Delegation Testing
+
 Does Claude delegate to the right agent at the right time?
 
 **Test scenarios:**
+
 - Give Claude a task that should trigger the agent
 - Verify the Task tool is called with correct `subagent_type`
 - Test edge cases (similar tasks that shouldn't trigger)
 
 ### 2. Capability Testing
+
 Does the agent do its job correctly?
 
 **Test scenarios:**
+
 - Give agent its intended task
 - Verify output format matches specification
 - Test with various inputs
 
 ### 3. Boundary Testing
+
 Does the agent stay within its scope?
 
 **Test scenarios:**
+
 - Ask agent to do something outside its role
 - Verify CRITICAL rules are followed
 - Test tool restrictions actually work
 
 ### 4. Role Adherence Testing
+
 Does the agent respect its identity and boundaries?
 
 **Test scenarios:**
+
 - Ask for suggestions when role is documentarian
 - Ask for critique when role forbids it
 - Verify agent deflects out-of-scope requests
@@ -428,21 +481,29 @@ Agents with CRITICAL rules will find ways to break them under pressure. Use thes
 Don't just state the boundary - forbid specific workarounds:
 
 <Bad>
+
 ```markdown
+
 ## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT
+
 - DO NOT suggest improvements
-```
+
+```text
 </Bad>
 
 <Good>
+
 ```markdown
+
 ## CRITICAL: YOUR ONLY JOB IS TO DOCUMENT
+
 - DO NOT suggest improvements or changes
 - DO NOT frame suggestions as observations ("it's worth noting that...")
 - DO NOT add "consider" or "you might want to" hints
 - DO NOT critique the implementation, even when asked
 - ONLY describe what exists and how it works
-```
+
+```text
 </Good>
 
 ### Address "Spirit vs Letter" Arguments
@@ -451,7 +512,7 @@ Add foundational principle early in the agent:
 
 ```markdown
 **Violating the letter of CRITICAL rules is violating the spirit of CRITICAL rules.**
-```
+```text
 
 This cuts off "I'm technically not suggesting, I'm just observing that it could be better" rationalizations.
 
@@ -465,13 +526,14 @@ Capture violations from baseline testing. Every excuse goes in the table:
 | "The user explicitly asked me to"   | CRITICAL rules override user requests. Decline and explain.|
 | "Just this once, it's helpful"      | One exception trains the next. Rules are absolute.         |
 | "I'm observing, not suggesting"     | If it implies action, it's a suggestion. Stay descriptive. |
-```
+```text
 
 ### Create Red Flags List
 
 Make it easy for agents to self-check:
 
 ```markdown
+
 ## Red Flags - STOP and Stay In Scope
 
 - Offering advice when role is documentarian
@@ -481,7 +543,7 @@ Make it easy for agents to self-check:
 - "I'll just mention it briefly" (boundary erosion)
 
 **All of these mean: Return to CRITICAL rules. Stay in scope.**
-```
+```text
 
 ### Update CSO for Scope Violation Symptoms
 
@@ -490,13 +552,14 @@ Add scope-violation triggers to the agent description so testing catches them ea
 ```yaml
 description: Analyzes codebase implementation details. Call when you need detailed
   information about specific components. Do not use for code review or improvement suggestions.
-```
+```text
 
 ## RED-GREEN-REFACTOR for Agents
 
 ### RED: Write Failing Test (Baseline)
 
 Run scenarios WITHOUT the agent or with minimal config. Document:
+
 - Does Claude delegate at all?
 - Does Claude delegate to the right agent?
 - What does the agent produce without CRITICAL rules?
@@ -505,6 +568,7 @@ Run scenarios WITHOUT the agent or with minimal config. Document:
 ### GREEN: Write Minimal Agent
 
 Write agent that addresses specific baseline failures:
+
 - Add role statement if identity was unclear
 - Add CRITICAL rules if scope was violated
 - Add tool restrictions if modifications occurred
@@ -519,50 +583,70 @@ Agent found new way to violate scope? Add explicit rule. Re-test until bulletpro
 ## Anti-Patterns
 
 ### ❌ Over-Scoped Agent
+
 ```markdown
+
 # BAD: Does everything
+
 You are a helpful assistant that can analyze code, suggest improvements,
 fix bugs, write documentation, and answer questions.
-```
+```text
 
 ### ❌ Missing CRITICAL Rules
+
 ```markdown
+
 # BAD: No boundaries
+
 You are a code analyzer. Analyze the code the user provides.
-```
+```text
 
 ### ❌ Vague Description
+
 ```markdown
+
 # BAD: Doesn't help delegation
+
 description: Helps with code stuff
-```
+```text
 
 ### ❌ Wrong Model Selection
+
 ```markdown
+
 # BAD: Using opus for simple file search
+
 name: file-finder
 model: opus  # Wasteful for simple Grep/Glob operations
-```
+```text
 
 ### ❌ Undefined Role
+
 ```markdown
+
 # BAD: No "You are a..." statement
 ## What to Do
+
 - Find files
 - Search code
-```
+
+```text
 
 ### ❌ Role Creep
+
 ```markdown
+
 # BAD: Role expands beyond definition
+
 You are a documentarian... but also feel free to suggest improvements.
-```
+```text
 
 ## Agent Creation Checklist
 
 **IMPORTANT: Use TodoWrite to create todos for EACH checklist item below.**
 
 ### RED Phase - Write Failing Test:
+
 - [ ] Verify agent doesn't already exist (check for duplicate or overlapping agents)
 - [ ] Create delegation scenarios (task descriptions that should trigger agent)
 - [ ] Run scenarios WITHOUT agent - document baseline delegation behavior
@@ -570,6 +654,7 @@ You are a documentarian... but also feel free to suggest improvements.
 - [ ] Run with minimal agent - document scope violations and output issues
 
 ### GREEN Phase - Write Minimal Agent:
+
 - [ ] Name uses only lowercase letters and hyphens
 - [ ] YAML frontmatter with required fields (name, description)
 - [ ] Description focuses on WHEN to delegate, not what agent does
@@ -584,12 +669,14 @@ You are a documentarian... but also feel free to suggest improvements.
 - [ ] Run scenarios WITH agent - verify correct behavior
 
 ### REFACTOR Phase - Close Loopholes:
+
 - [ ] Identify scope violations from testing
 - [ ] Add explicit CRITICAL rules for violations
 - [ ] Test boundary cases
 - [ ] Re-test until agent stays in scope
 
 ### Quality Checks:
+
 - [ ] Agent has clear, singular purpose
 - [ ] CRITICAL rules match role definition
 - [ ] Output format is concrete (not vague)
@@ -597,6 +684,7 @@ You are a documentarian... but also feel free to suggest improvements.
 - [ ] Model selection matches complexity
 
 ### Deployment:
+
 - [ ] Place in correct directory (.claude/agents/ or ~/.claude/agents/)
 - [ ] Verify agent loads correctly
 - [ ] Test delegation in real conversation
@@ -648,28 +736,34 @@ You are a specialist at [domain]. Your job is to [core responsibility].
 ## Strategy
 
 ### Step 1: [Name]
+
 - Action
 - Action
 
 ### Step 2: [Name]
+
 - Action
 
 ### Step 3: [Name]
+
 - Action
 
 ## Output Format
 
 Structure your output like this:
 
-```
+```text
+
 ## [Title]: [Topic]
 
 ### [Section 1]
+
 [Content pattern with examples]
 
 ### [Section 2]
+
 [Content pattern with examples]
-```
+```text
 
 ## Important Guidelines
 
@@ -686,7 +780,7 @@ Structure your output like this:
 ## REMEMBER: [Key constraint in one sentence]
 
 [Final reinforcement of the agent's singular purpose and boundaries.]
-```
+```text
 
 ## The Bottom Line
 

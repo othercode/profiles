@@ -5,6 +5,7 @@ A worked example showing TDD for command argument handling.
 ## Goal
 
 Create a `/project:fix-issue` command that:
+
 - Takes an issue number as argument
 - Optionally takes priority level
 - Handles missing arguments gracefully
@@ -12,39 +13,42 @@ Create a `/project:fix-issue` command that:
 ## Test Scenarios
 
 ### Scenario 1: Single Argument
-```
+
+```text
 Input: /project:fix-issue 123
 Expected: Fix GitHub issue #123
-```
+```text
 
 ### Scenario 2: Two Arguments
-```
+```text
 Input: /project:fix-issue 123 high
 Expected: Fix GitHub issue #123 with high priority
-```
+```text
 
 ### Scenario 3: No Arguments
-```
+```text
 Input: /project:fix-issue
 Expected: List recent issues and ask which to fix (not crash)
-```
+```text
 
 ### Scenario 4: Extra Arguments
-```
+```text
 Input: /project:fix-issue 123 high urgent
 Expected: Handle gracefully (ignore extra or include in context)
-```
+```text
 
 ---
 
 ## Iteration 1: Minimal Command
 
 ### Command (v1)
+
 ```markdown
+
 # .claude/commands/fix-issue.md
 
 Fix GitHub issue #$ARGUMENTS
-```
+```text
 
 ### Test Results
 
@@ -56,6 +60,7 @@ Fix GitHub issue #$ARGUMENTS
 | 4: Extra args | ⚠️ Partial | All args concatenated |
 
 ### Problems Identified
+
 1. No handling for missing arguments
 2. Two-argument case is grammatically awkward
 3. No description for `/help`
@@ -65,8 +70,11 @@ Fix GitHub issue #$ARGUMENTS
 ## Iteration 2: Add Argument Handling
 
 ### Command (v2)
+
 ```markdown
+
 # .claude/commands/fix-issue.md
+
 ---
 description: Fix a GitHub issue by number
 argument-hint: [issue-number]
@@ -78,7 +86,7 @@ If no issue number provided, list recent open issues:
 !`gh issue list --state open --limit 5 2>/dev/null || echo "Could not list issues"`
 
 Then ask which issue to fix.
-```
+```text
 
 ### Test Results
 
@@ -90,6 +98,7 @@ Then ask which issue to fix.
 | 4: Extra args | ⚠️ Partial | Still concatenated |
 
 ### Problems Identified
+
 1. Two-argument case needs positional variables
 2. Should use $1, $2 for structured arguments
 
@@ -98,8 +107,11 @@ Then ask which issue to fix.
 ## Iteration 3: Positional Arguments
 
 ### Command (v3)
+
 ```markdown
+
 # .claude/commands/fix-issue.md
+
 ---
 description: Fix a GitHub issue with optional priority
 argument-hint: [issue-number] [priority]
@@ -125,7 +137,7 @@ If no issue number provided, show recent issues:
 !`gh issue list --state open --limit 5 2>/dev/null || echo "Run 'gh auth login' to enable issue listing"`
 
 Then ask which issue to fix.
-```
+```text
 
 ### Test Results
 
@@ -143,7 +155,9 @@ Then ask which issue to fix.
 ## Final Command
 
 ```markdown
+
 # .claude/commands/fix-issue.md
+
 ---
 description: Fix a GitHub issue with optional priority
 argument-hint: [issue-number] [priority]
@@ -176,7 +190,7 @@ If no issue number provided, show recent issues:
 !`gh issue list --state open --limit 5 2>/dev/null || echo "GitHub CLI not configured"`
 
 Then ask which issue to fix.
-```
+```text
 
 ---
 
@@ -191,26 +205,32 @@ Don't try to handle all cases in v1. Start with the happy path, then add edge ca
 When command has multiple distinct parameters, use positional variables instead of $ARGUMENTS.
 
 ```markdown
+
 # $ARGUMENTS - single blob
+
 Fix $ARGUMENTS  # "123 high" as one string
 
 # $1, $2 - structured
+
 Fix #$1 with priority $2  # $1="123", $2="high"
-```
+```text
 
 ### 3. Always Handle Missing Arguments
 
 Never assume arguments will be provided:
 
 ```markdown
+
 # Bad - crashes without argument
+
 Fix issue #$1
 
 # Good - graceful fallback
+
 Fix issue #$1
 
 If no issue number provided, [fallback behavior]
-```
+```text
 
 ### 4. Use Bash for Dynamic Defaults
 
@@ -219,7 +239,7 @@ When arguments are missing, use !`command` to provide useful context:
 ```markdown
 If no file specified, review recent changes:
 !`git diff --name-only HEAD~3`
-```
+```text
 
 ### 5. Reference Skills for Methodology
 
@@ -227,13 +247,14 @@ Keep commands thin, reference skills for detailed guidance:
 
 ```markdown
 **REQUIRED:** Follow `git-workflow` skill for commit format.
-```
+```text
 
 ---
 
 ## Argument Pattern Quick Reference
 
 ### Single Optional Argument
+
 ```markdown
 ---
 argument-hint: [target]
@@ -241,9 +262,10 @@ argument-hint: [target]
 Process $ARGUMENTS
 
 If no target provided, use current directory.
-```
+```text
 
 ### Two Required Arguments
+
 ```markdown
 ---
 argument-hint: [source] [destination]
@@ -251,9 +273,10 @@ argument-hint: [source] [destination]
 Copy from $1 to $2
 
 Both source and destination are required.
-```
+```text
 
 ### Required + Optional
+
 ```markdown
 ---
 argument-hint: [file] [options]
@@ -261,9 +284,10 @@ argument-hint: [file] [options]
 Process $1 with options: $2
 
 File is required. Options default to standard settings.
-```
+```text
 
 ### Variadic (All Remaining)
+
 ```markdown
 ---
 argument-hint: [files...]
@@ -271,7 +295,7 @@ argument-hint: [files...]
 Process files: $ARGUMENTS
 
 Handles any number of files.
-```
+```text
 
 ---
 

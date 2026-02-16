@@ -41,7 +41,7 @@ Create `.claude/commands/review.md`:
 ```markdown
 Review the code for quality issues, security vulnerabilities, and performance problems.
 Provide specific, actionable feedback organized by priority.
-```
+```text
 
 Invoke with: `/project:review`
 
@@ -58,13 +58,14 @@ argument-hint: [directory]
 ---
 
 Scan $ARGUMENTS for security vulnerabilities including:
+
 - SQL injection risks
 - XSS vulnerabilities
 - Exposed credentials
 - Insecure configurations
 
 Report findings with severity levels and remediation steps.
-```
+```text
 
 Invoke with: `/project:security-scan src/`
 
@@ -80,15 +81,19 @@ Invoke with: `/project:security-scan src/`
 ### Tool Restriction Syntax
 
 ```yaml
+
 # Allow specific tools
+
 allowed-tools: Read, Grep, Glob, LS
 
 # Allow bash with specific command prefixes
+
 allowed-tools: Bash(git add:*), Bash(git commit:*), Bash(npm:*)
 
 # Combine tools and restricted bash
+
 allowed-tools: Read, Edit, Bash(git:*), Bash(npm test:*)
-```
+```text
 
 ## Dynamic Content
 
@@ -103,7 +108,8 @@ Fix the GitHub issue: $ARGUMENTS
 2. Understand the problem
 3. Implement the fix
 4. Write tests
-```
+
+```text
 
 Usage: `/project:fix-issue 123` → "$ARGUMENTS" becomes "123"
 
@@ -117,7 +123,7 @@ argument-hint: [issue-number] [priority]
 ---
 
 Fix issue #$1 with priority level: $2
-```
+```text
 
 Usage: `/project:fix 123 high` → "$1" is "123", "$2" is "high"
 
@@ -126,6 +132,7 @@ Usage: `/project:fix 123 high` → "$1" is "123", "$2" is "high"
 Include live command output:
 
 ```markdown
+
 ## Current State
 
 - Branch: !`git branch --show-current`
@@ -135,7 +142,7 @@ Include live command output:
 ## Task
 
 Based on the above context, create an appropriate commit message.
-```
+```text
 
 Bash commands execute when the command is invoked, and their output is injected into the prompt.
 
@@ -151,7 +158,7 @@ Review the configuration files:
 - ESLint config: @.eslintrc.js
 
 Check for inconsistencies between these configurations.
-```
+```text
 
 File contents are read and injected when the command is invoked.
 
@@ -161,7 +168,7 @@ File contents are read and injected when the command is invoked.
 
 Organize commands in subdirectories:
 
-```
+```text
 .claude/commands/
 ├── git/
 │   ├── commit.md      → /project:git:commit
@@ -171,7 +178,7 @@ Organize commands in subdirectories:
 │   ├── unit.md        → /project:test:unit
 │   └── e2e.md         → /project:test:e2e
 └── review.md          → /project:review
-```
+```text
 
 ### Discoverability
 
@@ -180,7 +187,9 @@ Run `/help` to see all available commands including custom ones.
 Create a help command listing your project's commands:
 
 ```markdown
+
 # .claude/commands/commands.md
+
 ---
 description: List all project commands
 ---
@@ -191,7 +200,8 @@ description: List all project commands
 - `/project:git:pr [title]` - Create pull request
 - `/project:test:unit [pattern]` - Run unit tests
 - `/project:review [file]` - Code review
-```
+
+```text
 
 ## Context Budget
 
@@ -200,6 +210,7 @@ Command descriptions are loaded into context for discoverability. If you have ma
 Run `/context` to check for warnings about excluded commands.
 
 To reduce context usage:
+
 - Keep descriptions concise
 - Remove unused commands
 - Use subdirectories to organize (only top-level descriptions load)
@@ -214,6 +225,7 @@ Custom slash commands have been merged with skills. Both approaches work:
 | Skill | `.claude/skills/review/SKILL.md` | Creates `/review` |
 
 Skills add optional features:
+
 - Directory for supporting files
 - Frontmatter to control invocation (manual vs auto)
 - Claude can load them automatically when relevant
@@ -225,7 +237,9 @@ Your existing `.claude/commands/` files continue working unchanged.
 ### Git Commit Command
 
 ```markdown
+
 # .claude/commands/git/commit.md
+
 ---
 allowed-tools: Bash(git:*)
 description: Create a conventional commit
@@ -242,15 +256,19 @@ description: Create a conventional commit
 ## Task
 
 Create a commit with a conventional commit message:
+
 - type(scope): description
 - Types: feat, fix, docs, style, refactor, test, chore
 - Keep subject line under 72 characters
-```
+
+```text
 
 ### Code Review Command
 
 ```markdown
+
 # .claude/commands/review.md
+
 ---
 allowed-tools: Read, Grep, Glob
 description: Comprehensive code review
@@ -273,12 +291,14 @@ If no target specified, review staged changes:
 5. **Testing**: Are there adequate tests?
 
 Provide specific feedback with file:line references.
-```
+```text
 
 ### Test Runner Command
 
 ```markdown
+
 # .claude/commands/test/run.md
+
 ---
 allowed-tools: Bash, Read
 description: Run tests with pattern matching
@@ -293,12 +313,14 @@ Run tests matching: $ARGUMENTS
    - Analyze error messages
    - Suggest fixes
    - Offer to implement fixes
-```
+```text
 
 ### Dependency Check Command
 
 ```markdown
+
 # .claude/commands/deps.md
+
 ---
 allowed-tools: Bash(npm:*), Read
 description: Check and update dependencies
@@ -318,7 +340,8 @@ description: Check and update dependencies
 2. Categorize by risk (major/minor/patch)
 3. Identify potential breaking changes
 4. Recommend update order
-```
+
+```text
 
 ## SDK Usage
 
@@ -346,7 +369,7 @@ for await (const message of query({
     console.log("Commands:", message.slash_commands);
   }
 }
-```
+```text
 
 ## Best Practices
 

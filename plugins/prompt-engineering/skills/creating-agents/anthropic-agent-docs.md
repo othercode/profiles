@@ -16,6 +16,7 @@ Sub-agents enable **task isolation** and **specialization**:
 - **Permission boundaries**: Control what actions an agent can take without user approval
 
 **Example use cases:**
+
 - Code exploration agent with read-only tools
 - Documentation writer with opus for quality
 - Fast file finder using haiku for speed
@@ -40,7 +41,7 @@ You are a specialist at [domain]. Your job is to [responsibility].
 ## Instructions
 
 [Agent-specific instructions here]
-```
+```text
 
 ### Frontmatter fields
 
@@ -60,21 +61,24 @@ You are a specialist at [domain]. Your job is to [responsibility].
 Restrict agent capabilities by listing allowed tools:
 
 ```yaml
+
 # Read-only agent
+
 tools: Read, Grep, Glob, LS
 
 # Modification agent without shell
+
 tools: Read, Grep, Glob, LS, Edit, Write
 
 # Full capability (inherits all)
 # Omit tools field entirely
-```
+```text
 
 Or deny specific tools:
 
 ```yaml
 disallowedTools: Bash, NotebookEdit
-```
+```text
 
 ### Model selection
 
@@ -86,15 +90,19 @@ disallowedTools: Bash, NotebookEdit
 | `inherit` | Match parent | Uses same model as caller |
 
 ```yaml
+
 # Fast exploration
+
 model: haiku
 
 # Balanced analysis
+
 model: sonnet
 
 # Complex planning
+
 model: opus
-```
+```text
 
 ### Permission modes
 
@@ -112,19 +120,24 @@ model: opus
 
 Sub-agents can be placed at multiple levels (checked in order):
 
-```
+```text
+
 # 1. CLI flag (session only)
+
 --agents ./my-agents/
 
 # 2. Project level
+
 .claude/agents/agent-name.md
 
 # 3. User level
+
 ~/.claude/agents/agent-name.md
 
 # 4. Plugin level
+
 plugin/agents/agent-name.md
-```
+```text
 
 Higher priority locations override lower ones if names conflict.
 
@@ -133,9 +146,9 @@ Higher priority locations override lower ones if names conflict.
 1. Claude receives a task
 2. Claude reads available agent descriptions
 3. If an agent matches, Claude delegates via the Task tool:
-   ```
+```text
    Task(subagent_type="agent-name", prompt="...")
-   ```
+```text
 4. Agent executes with its configured tools and model
 5. Agent returns result to Claude
 6. Claude summarizes result for user
@@ -145,23 +158,27 @@ Higher priority locations override lower ones if names conflict.
 The `description` field is critical for auto-delegation. Write it to answer: "When should Claude delegate to this agent?"
 
 ```yaml
+
 # Good: Clear trigger conditions
+
 description: Analyzes codebase implementation details. Use when you need
   detailed information about how specific components work.
 
 # Good: Comparison to alternatives
+
 description: Locates files and components. Use if you find yourself wanting
   to use Grep/Glob/LS more than once.
 
 # Bad: Vague
+
 description: Helps with code
-```
+```text
 
 **Proactive delegation**: Include "proactively" to trigger without explicit request:
 
 ```yaml
 description: Use this agent proactively when exploring unfamiliar codebases
-```
+```text
 
 ## Writing effective agent instructions
 
@@ -171,26 +188,29 @@ Start with a clear identity:
 
 ```markdown
 You are a specialist at [domain]. Your job is to [core responsibility].
-```
+```text
 
 ### Scope boundaries (CRITICAL rules)
 
 Explicitly define what the agent must NOT do:
 
 ```markdown
+
 ## CRITICAL: YOUR ONLY JOB IS TO [SCOPE]
 
 - DO NOT suggest improvements or changes
 - DO NOT critique the implementation
 - DO NOT perform root cause analysis
 - ONLY describe what exists and how it works
-```
+
+```text
 
 ### Output format
 
 Define expected output structure:
 
 ```markdown
+
 ## Output Format
 
 Structure your analysis like this:
@@ -198,28 +218,36 @@ Structure your analysis like this:
 ## Analysis: [Component Name]
 
 ### Overview
+
 [2-3 sentence summary]
 
 ### Entry Points
+
 - `file.js:45` - Description
 
 ### Key Patterns
+
 - **Pattern Name**: Where used and why
-```
+
+```text
 
 ### Guidelines and anti-patterns
 
 ```markdown
+
 ## Important Guidelines
+
 - Always include file:line references
 - Read files thoroughly before making statements
 - Be precise about function names
 
 ## What NOT to Do
+
 - Don't guess about implementation
 - Don't skip error handling
 - Don't make recommendations
-```
+
+```text
 
 ## Example agents
 
@@ -248,14 +276,18 @@ locate relevant files and explain their organization.
 ## Files for [Topic]
 
 ### Implementation
+
 - `path/file.js` - Purpose
 
 ### Tests
+
 - `path/file.test.js` - What it tests
 
 ### Configuration
+
 - `config/file.json` - Settings it contains
-```
+
+```text
 
 ### Documentation writer
 
@@ -278,10 +310,12 @@ documentation that helps developers understand and use code.
 - ONLY write documentation files
 
 ## Guidelines
+
 - Write for the target audience (developers, users, operators)
 - Include working code examples
 - Explain the "why" not just the "what"
-```
+
+```text
 
 ### Infrastructure operator
 
@@ -306,12 +340,14 @@ configure systems safely.
 - ALWAYS provide rollback instructions
 
 ## Process
+
 1. Diagnose: Gather information before acting
 2. Explain: State what you'll do and why
 3. Confirm: Get approval for risky operations
 4. Execute: Run commands with error handling
 5. Verify: Confirm changes worked correctly
-```
+
+```text
 
 ## Preloading skills
 
@@ -319,7 +355,7 @@ Load skills into agent context:
 
 ```yaml
 skills: managing-server-lifecycle, testing-conventions
-```
+```text
 
 The agent will have access to these skills' content during execution.
 
@@ -331,7 +367,7 @@ Define lifecycle hooks scoped to the agent:
 hooks:
   PreToolCall:
     - command: echo "Agent calling tool: $TOOL_NAME"
-```
+```text
 
 See [Hooks documentation](/en/docs/claude-code/hooks) for available hooks.
 
@@ -349,18 +385,19 @@ Before deploying, verify:
 ```markdown
 Give Claude a task that should trigger your agent.
 Verify the Task tool is called with correct subagent_type.
-```
+```text
 
 ### Testing boundaries
 
 ```markdown
 Ask agent to do something outside its role.
 Verify it declines or deflects appropriately.
-```
+```text
 
 ## Best practices
 
 ### DO:
+
 - Define clear scope boundaries
 - Use appropriate model for task complexity
 - Restrict tools to minimum needed
@@ -368,6 +405,7 @@ Verify it declines or deflects appropriately.
 - Test before deploying
 
 ### DON'T:
+
 - Create over-scoped "do everything" agents
 - Use opus for simple tasks (waste)
 - Use haiku for complex reasoning (quality loss)
@@ -377,30 +415,37 @@ Verify it declines or deflects appropriately.
 ## Common patterns
 
 ### Documentarian pattern
+
 Agent explains without critiquing. Read-only tools, clear "ONLY describe" rules.
 
 ### Executor pattern
+
 Agent takes actions safely. Includes confirmation steps, rollback guidance.
 
 ### Observer pattern
+
 Background agent for monitoring. Uses haiku, writes to logs/files.
 
 ### Expert pattern
+
 Deep domain knowledge agent. Uses opus, comprehensive instructions.
 
 ## Troubleshooting
 
 **Agent not triggered:**
+
 - Check description clarity
 - Verify agent file is in correct location
 - Check for name conflicts
 
 **Agent exceeds scope:**
+
 - Add more explicit CRITICAL rules
 - List specific anti-patterns
 - Test boundary scenarios
 
 **Wrong model being used:**
+
 - Verify `model` field in frontmatter
 - Check for `inherit` default behavior
 
