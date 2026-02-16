@@ -114,7 +114,7 @@ skills/
 - `description`: Third-person, describes ONLY when to use (NOT what it does)
   - Start with "Use when..." to focus on triggering conditions
   - Include specific symptoms, situations, and contexts
-  - **NEVER summarize the skill's process or workflow** (see CSO section for why)
+  - **NEVER summarize the skill's process or workflow** (see Description Guidelines section for why)
   - Keep under 500 characters if possible
 
 ```markdown
@@ -157,7 +157,7 @@ What goes wrong + fixes
 Concrete results
 ```text
 
-## Claude Search Optimization (CSO)
+## Description Guidelines
 
 **Critical for discovery:** Future Claude needs to FIND your skill
 
@@ -559,7 +559,7 @@ Make it easy for agents to self-check when rationalizing:
 **All of these mean: Delete code. Start over with TDD.**
 ```text
 
-### Update CSO for Violation Symptoms
+### Update Description with Violation Symptoms
 
 Add to description: symptoms of when you're ABOUT to violate the rule:
 
@@ -591,7 +591,7 @@ Run same scenarios WITH skill. Agent should now comply.
 
 Agent found new rationalization? Add explicit counter. Re-test until bulletproof.
 
-**REQUIRED:** See testing-skills-with-subagents.md for the complete testing methodology:
+**REQUIRED (standard/critical artifacts):** See testing-skills-with-subagents.md for the complete testing methodology:
 
 - How to write pressure scenarios
 - Pressure types (time, sunk cost, authority, exhaustion)

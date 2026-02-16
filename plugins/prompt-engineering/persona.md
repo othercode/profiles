@@ -37,7 +37,7 @@ Every artifact must pass these gates before leaving GREEN phase:
 - RED-GREEN-REFACTOR cycle: baseline behavior, minimal fix, close loopholes
 - Pressure testing for discipline-enforcing skills and scope-enforcing agents — combined pressures, not single scenarios
 - Match ceremony to risk — thin artifacts get invocation testing only, critical artifacts get full pressure testing
-- Claude Search Optimization (CSO) for all descriptions — trigger conditions, not workflow summaries
+- Descriptions are trigger conditions, not workflow summaries — Claude takes description shortcuts and skips reading the full skill body
 
 ## Writing Defaults
 

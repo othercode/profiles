@@ -15,7 +15,7 @@ You write test cases (delegation scenarios with subagents), watch them fail (bas
 
 **Official guidance:** For Anthropic's official agent authoring specification, see anthropic-agent-docs.md. This document provides the complete frontmatter specification and configuration options.
 
-**REQUIRED:** See testing-agents-with-subagents.md for the complete testing methodology:
+**REQUIRED (standard/critical artifacts):** See testing-agents-with-subagents.md for the complete testing methodology:
 
 - How to write delegation scenarios
 - Scope pressure testing
@@ -283,7 +283,7 @@ Structure your output like this:
 ## REMEMBER: [Key constraint summary]
 ```text
 
-## Claude Search Optimization (CSO) for Agents
+## Description Guidelines for Agents
 
 **Critical for discovery:** Claude reads `description` to decide when to delegate.
 
@@ -414,7 +414,7 @@ Edit agent without testing? Same violation.
 
 ## Testing Agents
 
-**REQUIRED:** See testing-agents-with-subagents.md for the complete testing methodology.
+**REQUIRED (standard/critical artifacts):** See testing-agents-with-subagents.md for the complete testing methodology.
 
 Agent testing has three dimensions:
 
@@ -545,7 +545,7 @@ Make it easy for agents to self-check:
 **All of these mean: Return to CRITICAL rules. Stay in scope.**
 ```text
 
-### Update CSO for Scope Violation Symptoms
+### Update Description with Scope Violation Symptoms
 
 Add scope-violation triggers to the agent description so testing catches them early:
 

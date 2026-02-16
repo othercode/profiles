@@ -15,7 +15,7 @@ You write test cases (invocation scenarios), watch them fail (baseline behavior)
 
 **Official guidance:** For Anthropic's official command specification, see anthropic-command-docs.md
 
-**REQUIRED:** See testing-commands-with-subagents.md for the complete testing methodology
+**REQUIRED (standard/critical artifacts):** See testing-commands-with-subagents.md for the complete testing methodology
 
 ## What is a Command?
 
