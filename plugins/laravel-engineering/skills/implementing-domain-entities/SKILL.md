@@ -1,5 +1,5 @@
 ---
-name: writing-domain-entities
+name: implementing-domain-entities
 description: Use when creating aggregate root entities, child entities, read projections, or adding domain behavior methods to Eloquent models in a DDD bounded context.
 ---
 
@@ -198,7 +198,7 @@ public function activate(): self
 }
 ```
 
-Wrap Spatie's `transitionTo()` in a try/catch and convert `CouldNotPerformTransition` into a domain exception. See the `writing-value-objects` skill for state machine setup.
+Wrap Spatie's `transitionTo()` in a try/catch and convert `CouldNotPerformTransition` into a domain exception. See the `implementing-value-objects` skill for state machine setup.
 
 **Computed attributes** — use Laravel's `Attribute` class for derived values:
 
@@ -348,9 +348,9 @@ trait ValidationRules
 - Use `Rule::enum()` to validate backed enums
 - Advanced traits split into multiple methods: `rules()` for create, `updateRules()` for update
 - Naming: `ValidationRules` when one per module, `{Entity}ValidationRules` when multiple exist in the same context
-- Custom rule objects (e.g., `new PostCodeRule`) wrap value object validation — see `writing-value-objects`
+- Custom rule objects (e.g., `new PostCodeRule`) wrap value object validation — see `implementing-value-objects`
 
-The Infrastructure layer consumes the trait in Form Request classes — see `writing-form-requests`.
+The Infrastructure layer consumes the trait in Form Request classes — see `implementing-form-requests`.
 
 ---
 
@@ -361,9 +361,9 @@ Aggregate roots compose behavior through traits from the Shared Kernel. Use as n
 | Trait | Source | Purpose | Details |
 |---|---|---|---|
 | `HasDomainEvents` | `Shared/Domain/` | Event registration + publishing | See `implementing-domain-events` |
-| `HasFactory` | Eloquent | Test factory support | See `writing-factories` |
+| `HasFactory` | Eloquent | Test factory support | See `implementing-factories` |
 | `HasUuids` | Eloquent | UUID primary keys | Standard on all entities |
-| `HasStates` | `spatie/laravel-model-states` | State machine support | See `writing-value-objects` |
+| `HasStates` | `spatie/laravel-model-states` | State machine support | See `implementing-value-objects` |
 | `HasProfilePhoto` | `Shared/Domain/` | Avatar management | Jetstream stack |
 | `Notifiable` | Eloquent | Mail/notification channels | Consult Laravel docs |
 | `IsExtensible` | `Shared/Domain/` | Custom attribute support | Marker trait |

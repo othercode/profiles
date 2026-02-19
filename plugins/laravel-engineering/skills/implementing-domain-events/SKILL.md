@@ -214,7 +214,7 @@ public function updateEmail(string $email): self
 }
 ```
 
-See the `writing-domain-entities` skill for the full entity patterns.
+See the `implementing-domain-entities` skill for the full entity patterns.
 
 ---
 
@@ -254,7 +254,7 @@ final readonly class CreateContact
 2. Use case persists the entity via repository (`$repository->save()`)
 3. Use case publishes events (`$entity->publishDomainEvents($this->eventBus)`)
 4. `IlluminateEventBus` dispatches events through Laravel's `event()` helper
-5. Registered listeners handle side effects (see `writing-event-handlers`)
+5. Registered listeners handle side effects (see `implementing-event-handlers`)
 
 **Rules:**
 

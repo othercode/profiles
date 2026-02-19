@@ -1,5 +1,5 @@
 ---
-name: writing-use-cases
+name: implementing-use-cases
 description: Use when creating application services, writing use case classes, implementing business operations, or composing use cases for create, find, update, and delete flows.
 ---
 

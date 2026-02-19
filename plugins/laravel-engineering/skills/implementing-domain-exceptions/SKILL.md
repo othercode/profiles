@@ -1,5 +1,5 @@
 ---
-name: writing-domain-exceptions
+name: implementing-domain-exceptions
 description: Use when creating domain exception classes, structuring exception hierarchies for a module, or adding application-layer exceptions for use case errors.
 ---
 

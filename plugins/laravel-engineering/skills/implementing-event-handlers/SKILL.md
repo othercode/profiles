@@ -1,5 +1,5 @@
 ---
-name: writing-event-handlers
+name: implementing-event-handlers
 description: Use when creating event handler classes, handling domain events in the application layer, setting up cross-context event listeners, or configuring queued event processing.
 ---
 

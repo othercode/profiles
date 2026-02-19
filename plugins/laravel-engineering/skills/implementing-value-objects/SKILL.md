@@ -1,5 +1,5 @@
 ---
-name: writing-value-objects
+name: implementing-value-objects
 description: Use when creating value objects, PHP enums, state classes, state transitions, or custom validation rule objects in a DDD bounded context.
 ---
 
@@ -357,8 +357,8 @@ class ToActive extends Transition
 - Named `To{TargetState}` or `{FromState}To{TargetState}` when disambiguation is needed
 - Constructor receives the entity
 - `handle()` sets the new state, performs side effects, saves, and returns the entity
-- Transitions are the **one place** where calling `save()` is acceptable — the spatie framework requires it. Domain behavior methods on entities must NOT call `save()` (see `writing-domain-entities`)
-- Throw domain exceptions for invalid transitions (see the `writing-domain-entities` skill for the entity-side `activate()` pattern that wraps `transitionTo()`)
+- Transitions are the **one place** where calling `save()` is acceptable — the spatie framework requires it. Domain behavior methods on entities must NOT call `save()` (see `implementing-domain-entities`)
+- Throw domain exceptions for invalid transitions (see the `implementing-domain-entities` skill for the entity-side `activate()` pattern that wraps `transitionTo()`)
 
 ### Entity Integration
 
@@ -380,7 +380,7 @@ class Visa extends Model
 }
 ```
 
-The entity's domain behavior methods call `$this->status->transitionTo(TargetState::class)` — see the `writing-domain-entities` skill for that pattern.
+The entity's domain behavior methods call `$this->status->transitionTo(TargetState::class)` — see the `implementing-domain-entities` skill for that pattern.
 
 ### Directory Layout
 
@@ -468,7 +468,7 @@ class PostCodeRule implements DataAwareRule, ValidationRule
 - Catch the domain exception and call `$fail()` with a user-friendly message
 - Use `DataAwareRule` when the rule needs to reference other fields in the request
 - Placement: `{Module}/Domain/Validators/` or `{BoundedContext}/Shared/Domain/Validators/` — always use `Validators/` as the subdirectory name
-- Used in `ValidationRules` traits (see `writing-domain-entities`) and Form Requests (see `writing-form-requests`)
+- Used in `ValidationRules` traits (see `implementing-domain-entities`) and Form Requests (see `implementing-form-requests`)
 
 ---
 
