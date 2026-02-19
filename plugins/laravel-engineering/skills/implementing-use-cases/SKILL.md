@@ -233,6 +233,7 @@ final readonly class DeleteContact
 **Why instantiate, not inject?** The finder depends on the same repository. Instantiating it keeps the dependency explicit and avoids unnecessary container bindings.
 
 Common compositions:
+
 - `Delete{Entity}` composes `Find{Entity}`
 - `Update{Entity}` composes `Find{Entity}`
 - `Accept{Action}` composes `Find{Entity}` + `Create{RelatedEntity}`

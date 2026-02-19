@@ -233,6 +233,7 @@ return $parser->applyCriteria($query, $criteria);
 | `paginate` | `bool` | `true` returns `LengthAwarePaginator`, `false` returns `Collection` |
 
 **What the parser handles automatically:**
+
 - Filtering (where clauses from criteria filters)
 - Sorting (order by from criteria order)
 - Pagination (page + per-page from criteria)

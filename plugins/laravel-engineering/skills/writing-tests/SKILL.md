@@ -104,6 +104,7 @@ test('it creates a contact with valid data', function () { });
 ```
 
 **Rules:**
+
 - Describe the expected behavior, not the implementation
 - Include the failure scenario in the name when testing negative cases
 - Stay consistent within a project — pick one style and use it everywhere

@@ -161,11 +161,14 @@ public function __invoke(string $id): Contact
 ### Exception Messages
 
 - Use `strtr()` with token substitution for messages containing identifiers:
+
   ```php
   throw new AccountNotFound(strtr('Account {id} not found.', ['{id}' => $id]));
   ```
+
 - Keep messages business-oriented and descriptive
 - Always declare thrown exceptions in method docblocks:
+
   ```php
   /**
    * @throws ContactNotFound
