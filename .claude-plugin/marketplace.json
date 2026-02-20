@@ -5,10 +5,13 @@
   "owner": {
     "name": "otherCode"
   },
+  "metadata": {
+    "pluginRoot": "./plugins"
+  },
   "plugins": [
     {
       "name": "laravel-engineering",
-      "source": "./plugins/laravel-engineering",
+      "source": "laravel-engineering",
       "description": "Laravel Engineering — conventions, workflows, and automation for Laravel + Vue.js development",
       "version": "1.0.0",
       "category": "backend",
@@ -16,7 +19,7 @@
     },
     {
       "name": "django-engineering",
-      "source": "./plugins/django-engineering",
+      "source": "django-engineering",
       "description": "Django Engineering — conventions, workflows, and automation for Django + DRF development",
       "version": "1.0.0",
       "category": "backend",
@@ -24,7 +27,7 @@
     },
     {
       "name": "prompt-engineering",
-      "source": "./plugins/prompt-engineering",
+      "source": "prompt-engineering",
       "description": "Prompt Engineering — TDD-driven creation of skills, agents, and commands for Claude Code",
       "version": "1.0.0",
       "category": "tooling",

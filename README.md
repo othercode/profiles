@@ -22,6 +22,30 @@ Install a profile:
 /plugin install <profile-name>@othercode
 ```
 
+## Update
+
+Profiles are distributed as a mono-repo marketplace. To pull the latest versions of all profiles:
+
+```sh
+/plugin marketplace update othercode
+```
+
+> **Note:** Do not use `/plugin update <profile-name>` for individually installed profiles — that only works for plugins with external sources (separate GitHub repos). Mono-repo plugins update through the marketplace.
+
+## Uninstall
+
+```sh
+/plugin uninstall <profile-name>@othercode
+```
+
+## Available profiles
+
+| Profile | Stack | Install |
+|---------|-------|---------|
+| `laravel-engineering` | PHP, Laravel, Vue.js | `/plugin install laravel-engineering@othercode` |
+| `django-engineering` | Python, Django, DRF | `/plugin install django-engineering@othercode` |
+| `prompt-engineering` | Claude Code skills, agents, commands | `/plugin install prompt-engineering@othercode` |
+
 ## Per-project setup
 
 Add this to your project's `.claude/settings.json` to auto-suggest profiles for anyone who clones the repo:
@@ -67,3 +91,9 @@ plugins/<name>/
 Skills follow the naming convention `<verb>-<target>` (e.g. `writing-tests`, `commenting-code`, `implementing-domain-events`).
 
 Skill descriptions must be trigger-only — describe **when** to activate, never summarize what the skill contains.
+
+After creating the plugin structure, add an entry to `.claude-plugin/marketplace.json` and validate:
+
+```sh
+/plugin validate .
+```
