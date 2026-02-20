@@ -11,3 +11,8 @@ Thumbs.db
 
 # Node (CI tooling)
 node_modules/
+
+# Local tool state
+.claude/
+.omc/
+.serena/
