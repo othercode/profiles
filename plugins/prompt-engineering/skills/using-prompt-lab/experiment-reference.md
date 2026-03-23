@@ -36,6 +36,7 @@ Optional markdown content describing the experiment in detail.
 The user message sent to the LLM. Uses Jinja2 `{{ variable }}` syntax. Each variant has its own `prompt.md` — this is what you A/B test.
 
 **With variables:**
+
 ```markdown
 Generate 5 creative product names.
 
@@ -46,6 +47,7 @@ Product names:
 ```
 
 **Few-shot variant** (same experiment, different approach):
+
 ```markdown
 Generate 5 creative product names.
 
@@ -60,6 +62,7 @@ Product names:
 ```
 
 **Static prompt** (no variables needed, no inputs.yaml required):
+
 ```markdown
 Tell me a joke about programming.
 ```
@@ -81,6 +84,7 @@ For other questions, just respond normally without using any tools.
 ```
 
 **When to use system.md:**
+
 - Setting a persona or role for the LLM
 - Providing tool usage instructions
 - Separating "what the model is" from "what the user asks"
@@ -200,6 +204,7 @@ Enabled by default. The system automatically prepends instructions for step-by-s
 ### Judge output format
 
 The system automatically appends a JSON output instruction. The judge must respond with:
+
 ```json
 {"score": <integer in range>, "reasoning": "<explanation>"}
 ```
@@ -240,23 +245,27 @@ Tool calls made by the model are captured in the response and available to the j
 ## Writing Effective Rubrics
 
 **1. Start at a baseline, add/subtract** — More predictable than absolute scoring:
+
 ```markdown
 ## Scoring (start at 3, add/subtract)
 ### Criterion A (-1 to +1)
 ```
 
 **2. Use concrete criteria** — Not "is it good?" but "+2 if ALL names are CamelCase compounds":
+
 ```markdown
 # Bad:  "Rate the quality"
 # Good: "+2 if ALL names are single CamelCase compounds (FlexiFit, OmniStep)"
 ```
 
 **3. Soft penalties for anti-patterns** — Capped to prevent runaway deductions:
+
 ```markdown
 - Names including product category: -0.5 per occurrence (max -1)
 ```
 
 **4. Include score guide** — Anchors the judge's expectations:
+
 ```markdown
 ## Score Guide
 - **5**: Exceptional
@@ -267,6 +276,7 @@ Tool calls made by the model are captured in the response and available to the j
 ```
 
 **5. For tool-use experiments** — Include tool_calls and define expected behavior:
+
 ```markdown
 **Tool calls made:** {{ tool_calls }}
 - If weather question: Should call `get_weather` with correct location → 5

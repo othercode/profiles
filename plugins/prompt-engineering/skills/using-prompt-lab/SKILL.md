@@ -9,7 +9,7 @@ description: Use when creating, running, comparing, or analyzing prompt-lab expe
 
 Prompt-lab is a CLI tool for testing prompt variants across LLM providers using LLM-as-judge evaluation.
 
-```
+```text
 system.md (optional) + prompt.md + inputs.yaml → LLM → response → judge.md → score
 ```
 
@@ -17,7 +17,7 @@ Create multiple variants (v1, v2, ...) to A/B test different prompt approaches a
 
 ## Experiment Structure
 
-```
+```text
 experiments/
   my-experiment/
     experiment.md       # Config: name, models, runs (required)
@@ -128,6 +128,7 @@ prompt-lab run experiments/my-experiment -k openai:MY_OPENAI_KEY
 ### What happens during a run
 
 For each `(input, run_number, model)` combination, concurrently:
+
 1. Provider renders `prompt.md` + `system.md` with input variables via Jinja2
 2. LLM generates a response (with optional tool calls)
 3. Judge LLM scores the response using `judge.md` rubric
@@ -171,7 +172,7 @@ prompt-lab show experiments/my-experiment/v1 --run 2026-01-25T19-30-00
 
 ### Results storage
 
-```
+```text
 variant/results/{timestamp}/
   run.yaml                              # Run metadata (duration, models, counts)
   stats.yaml                            # Per-input stats (mean, CI, stddev, scores)
@@ -188,6 +189,7 @@ prompt-lab compare experiments/my-experiment
 ```
 
 Shows comparison table across all variants:
+
 - Mean score per variant with 95% confidence intervals
 - Average latency
 - Total runs
